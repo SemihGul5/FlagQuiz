@@ -2,7 +2,11 @@ package com.example.flagquiz;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,5 +40,23 @@ public class LoginFragment extends Fragment {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        goToSignin(view);
+    }
+
+    private void goToSignin(View view) {
+        binding.kayitOlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavDirections directions=LoginFragmentDirections.actionLoginFragmentToSigninFragment();
+                Navigation.findNavController(view).navigate(directions);
+
+            }
+        });
     }
 }

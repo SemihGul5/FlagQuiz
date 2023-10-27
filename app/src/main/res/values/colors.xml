@@ -6,5 +6,7 @@
     <color name="gri">#8792A1</color>
     <color name="acikMavi">#7FADEB</color>
     <color name="alternatif">#D9E8FC</color>
-
+    <color name="Yeşil">#70F155</color>
+    <color name="Kırmızı">#F44336</color>
+    <color name="Sarı">#FFEB3B</color>
 </resources>
