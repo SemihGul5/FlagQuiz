@@ -1,5 +1,7 @@
 package com.example.flagquiz;
 
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +21,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,6 +58,7 @@ public class SigninFragment extends Fragment {
         super.onCreate(savedInstanceState);
         auth=FirebaseAuth.getInstance();
         firestore=FirebaseFirestore.getInstance();
+
     }
 
 
@@ -64,6 +68,7 @@ public class SigninFragment extends Fragment {
         binding = FragmentSigninBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         return view;
+
     }
 
     @Override
@@ -72,6 +77,7 @@ public class SigninFragment extends Fragment {
 
         goToLogin(view);
         userSignin(view);
+
     }
 
     private void userSignin(View view) {
@@ -116,8 +122,8 @@ public class SigninFragment extends Fragment {
                     }
                     else {
                         Snackbar.make(view,"Şifreler aynı olmalıdır",Snackbar.LENGTH_SHORT).show();
-                        binding.singInPasswordRetryText.setBackgroundColor(getResources().getColor(R.color.Kırmızı));
                         binding.singInPasswordText.setBackgroundColor(getResources().getColor(R.color.Kırmızı));
+                        binding.singInPasswordRetryText.setBackgroundColor(getResources().getColor(R.color.Kırmızı));
                     }
                 }
             }
