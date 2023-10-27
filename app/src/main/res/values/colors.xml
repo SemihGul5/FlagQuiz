@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="appColor">#1D64C2</color>
+    <color name="gri">#8792A1</color>
+    <color name="acikMavi">#7FADEB</color>
+    <color name="alternatif">#D9E8FC</color>
+
+</resources>

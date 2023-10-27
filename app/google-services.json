@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "175875504731",
+    "project_id": "flagquiz-fdae7",
+    "storage_bucket": "flagquiz-fdae7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175875504731:android:0bdfcc9ced07537fd3dd7e",
+        "android_client_info": {
+          "package_name": "com.example.flagquiz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdxfyvDOxIIfJyPpF_MLE3HIX3j2IRrSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
