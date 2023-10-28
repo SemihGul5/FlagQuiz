@@ -22,6 +22,10 @@
             android:id="@+id/nav_about"
             android:icon="@drawable/baseline_info_24"
             android:title="Hakkımızda"/>
+        <item
+            android:id="@+id/nav_contackUs"
+            android:icon="@drawable/ic_notifications_black_24dp"
+            android:title="Bize Ulaşın"/>
     </group>
     <item
         android:title="">
