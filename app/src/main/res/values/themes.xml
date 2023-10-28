@@ -4,6 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/appColor</item>
+        <item name="colorPrimaryVariant">@color/appColor</item>
         <item name="titleTextColor">@color/white</item>
     </style>
 
@@ -12,16 +13,19 @@
         <item name="titleTextColor">@color/white</item>
 
     </style>
+
     <style name="Base.Theme.Login" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="colorPrimary">@color/appColor</item>
         <item name="titleTextColor">@color/white</item>
 
     </style>
+
     <style name="Base.Theme.HighScore" parent="Theme.MaterialComponents.Light.Bridge">
         <item name="colorPrimary">@color/appColor</item>
         <item name="titleTextColor">@color/white</item>
 
     </style>
+
     <style name="Base.Theme.Game" parent="Theme.MaterialComponents.Light.Bridge">
         <item name="colorPrimary">@color/appColor</item>
         <item name="titleTextColor">@color/white</item>
@@ -29,4 +33,19 @@
     </style>
 
     <style name="Theme.FlagQuiz" parent="Base.Theme.FlagQuiz" />
+
+    <style name="Theme.FlagQuiz.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.FlagQuiz.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.FlagQuiz.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_out</item>
+
+    </style>
 </resources>

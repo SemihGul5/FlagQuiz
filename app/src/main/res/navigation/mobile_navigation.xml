@@ -22,9 +22,5 @@
         android:name="com.example.flagquiz.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.flagquiz.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+
 </navigation>
