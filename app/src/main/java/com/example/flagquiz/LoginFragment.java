@@ -21,6 +21,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
@@ -109,9 +111,9 @@ public class LoginFragment extends Fragment {
                     auth.signInWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            if (auth.getCurrentUser().isEmailVerified()){
+                            if (Objects.requireNonNull(auth.getCurrentUser()).isEmailVerified()){
                                 Intent intent= new Intent(getContext(), MainActivity2.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                             }
                             else{
@@ -140,4 +142,5 @@ public class LoginFragment extends Fragment {
             }
         });
     }
+
 }
