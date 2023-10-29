@@ -84,8 +84,10 @@ public class SigninFragment extends Fragment {
         binding.kayitolkayitOlButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                binding.progressBarSignIn.setVisibility(View.VISIBLE);
                 name=binding.signInUserNameText.getText().toString();
                 userName=binding.singInUserNickNameText.getText().toString();
+                userName=userName.toUpperCase();
                 email=binding.singInUserEmailText.getText().toString();
                 password=binding.singInPasswordText.getText().toString();
                 passwordRetry=binding.singInPasswordRetryText.getText().toString();
@@ -93,6 +95,8 @@ public class SigninFragment extends Fragment {
                 if (name.equals("")||userName.equals("")||email.equals("")||passwordRetry.equals("")||password.equals(""))
                 {
                     Snackbar.make(view,"Tüm alanları doldurun",Snackbar.LENGTH_SHORT).show();
+                    binding.progressBarSignIn.setVisibility(View.GONE);
+
                 }
                 else {
                     if (password.equals(passwordRetry)){
@@ -107,15 +111,20 @@ public class SigninFragment extends Fragment {
                                             saveInFireStoreUserNameCollection(userName,email);
                                             //saveInFireStoreUserCollection();
                                             saveAuthUser(email,password,view);
+                                            binding.progressBarSignIn.setVisibility(View.GONE);
+
                                         }
                                         else{
                                             Snackbar.make(view, "Bu kullanıcı adı daha önceden alınmış", Snackbar.LENGTH_SHORT).show();
                                             binding.singInUserNickNameText.setBackgroundColor(getResources().getColor(R.color.Kırmızı));
+                                            binding.progressBarSignIn.setVisibility(View.GONE);
 
                                         }
                                     }
                                     else{
                                         Snackbar.make(view, "Sorgu hatası: " + task.getException().getLocalizedMessage(), Snackbar.LENGTH_SHORT).show();
+                                        binding.progressBarSignIn.setVisibility(View.GONE);
+
                                     }
                             }
                         });
@@ -124,6 +133,8 @@ public class SigninFragment extends Fragment {
                         Snackbar.make(view,"Şifreler aynı olmalıdır",Snackbar.LENGTH_SHORT).show();
                         binding.singInPasswordText.setBackgroundColor(getResources().getColor(R.color.Kırmızı));
                         binding.singInPasswordRetryText.setBackgroundColor(getResources().getColor(R.color.Kırmızı));
+                        binding.progressBarSignIn.setVisibility(View.GONE);
+
                     }
                 }
             }

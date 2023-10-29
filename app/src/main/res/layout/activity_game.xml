@@ -44,52 +44,65 @@
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
+        app:alignmentMode="alignMargins"
+        app:columnCount="2"
+        app:layout_columnWeight="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/countryNameText"
-        app:columnCount="2"
-        app:rowCount="2"
         app:layout_gravity="fill"
-        app:layout_columnWeight="1"
         app:layout_rowWeight="1"
-        app:useDefaultMargins="true"
-        app:alignmentMode="alignMargins">
+        app:rowCount="2"
+        app:useDefaultMargins="true">
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_columnWeight="1"
-        app:layout_rowWeight="1"
-        android:layout_margin="4dp"
-        android:src="@drawable/ic_home_black_24dp" />
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_home_black_24dp"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1" />
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_columnWeight="1"
-        app:layout_rowWeight="1"
-        android:layout_margin="4dp"
-        android:src="@drawable/ic_home_black_24dp" />
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_home_black_24dp"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1" />
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_columnWeight="1"
-        app:layout_rowWeight="1"
-        android:layout_margin="4dp"
-        android:src="@drawable/ic_home_black_24dp" />
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_home_black_24dp"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1" />
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_columnWeight="1"
-        app:layout_rowWeight="1"
-        android:layout_margin="4dp"
-        android:src="@drawable/ic_home_black_24dp" />
-</androidx.gridlayout.widget.GridLayout>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_home_black_24dp"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1" />
+    </androidx.gridlayout.widget.GridLayout>
+
+    <Button
+        android:id="@+id/button_game_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Atla"
+        android:background="@drawable/icidolu_button_background"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridLayout" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

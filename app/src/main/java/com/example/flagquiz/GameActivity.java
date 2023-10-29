@@ -2,6 +2,7 @@ package com.example.flagquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -19,4 +20,20 @@ public class GameActivity extends AppCompatActivity {
 
 
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Uygulama arka plana atıldığında burada yapmak istediğiniz işlemleri gerçekleştirin.
+        Intent intent= new Intent(GameActivity.this, MainActivity2.class);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Uygulama ön plana geldiğinde burada yapmak istediğiniz işlemleri gerçekleştirin.
+        // Örneğin, önceki durumu geri yükleyebilir veya oyununuzu yeniden başlatabilirsiniz.
+        Intent intent= new Intent(GameActivity.this, MainActivity2.class);
+
+    }
+
 }

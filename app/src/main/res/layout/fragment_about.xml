@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.about.AboutFragment">
+    tools:context=".ui.about.AboutFragment"
+    android:paddingTop="?attr/actionBarSize"
+    >
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:text="Merhaba ve hoş geldiniz!\n\nUygulamamız, dünya ülkeleri ile ilgili eğlenceli bir öğrenme deneyimi sunar. Bu uygulama, bayrakları, ülke isimlerini öğrenmenize yardımcı olur. Hem eğitici hem de eğlenceli olan bu uygulama ile dünyanın farklı bölgelerini keşfedin.\n\nUygulamamızın özellikleri:\n\n- Dünya ülkeleri ve bayraklarını keşfetmek için interaktif bir oyun.\n- Uygulamanın kullanımını kolaylaştıran sezgisel arayüz.\n- Kendinizi başkalarıyla kıyaslayabileceğiniz bir puan tablosu.\n\nUygulamamızı kullanarak dünya coğrafyası hakkında bilgi sahibi olabilir ve eğlenceli bir şekilde öğrenebilirsiniz. Eğitim ve öğrenme deneyiminizi geliştirmek için bu uygulamayı kullanın ve dünya üzerindeki farklı kültürleri keşfetmek için keyifli bir yolculuğa çıkın.\n\nEğlenceyi ve öğrenmeyi bir araya getiren bu uygulamayı denediğiniz için teşekkür ederiz. Herhangi bir geri bildiriminiz veya sorunuz varsa, lütfen bizimle iletişime geçmekten çekinmeyin. İyi öğrenmeler!\n\nSaygılarımızla, Abrebo Studio"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

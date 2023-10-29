@@ -97,7 +97,6 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         fragmentManager =getSupportFragmentManager();
         openFragment(new HomeFragment());
 
-
     }
 
 
@@ -111,7 +110,12 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         } else if (itemId==R.id.nav_contackUs) {
             openFragment(new NotificationsFragment());
         } else if (itemId==R.id.nav_share) {
-            openFragment(new ShareFragment());
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, "Uygulamanın google play linki");
+
+            // Intent'i başlatın
+            startActivity(Intent.createChooser(sharingIntent, "Paylaş:"));
         } else if (itemId==R.id.nav_logout) {
             binding.progressBarM2.setVisibility(View.VISIBLE);
             auth.signOut();

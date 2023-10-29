@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="1dp"
         android:hint="Başlık"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,6 +48,7 @@
             android:lines="10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="top"
              />
     </com.google.android.material.textfield.TextInputLayout>
     <Button
