@@ -16,11 +16,13 @@
 
     <style name="Base.Theme.Login" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="colorPrimary">@color/appColor</item>
+        <item name="colorPrimaryVariant">@color/appColor</item>
+
         <item name="titleTextColor">@color/white</item>
 
     </style>
 
-    <style name="Base.Theme.HighScore" parent="Theme.MaterialComponents.Light.Bridge">
+    <style name="Base.Theme.HighScore" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/appColor</item>
         <item name="titleTextColor">@color/white</item>
 
@@ -39,13 +41,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.FlagQuiz.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.FlagQuiz.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/slide_in</item>
-        <item name="android:windowExitAnimation">@anim/slide_out</item>
-
+    <style name="ThemeOverlay.AppCompat.navTheme">
+        <item name="colorPrimary">@color/white</item>
     </style>
+
+
+
 </resources>

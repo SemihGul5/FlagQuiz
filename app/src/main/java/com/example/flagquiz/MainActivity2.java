@@ -38,13 +38,19 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.flagquiz.databinding.ActivityMain2Binding;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity2 extends AppCompatActivity {
+public class MainActivity2 extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ActivityMain2Binding binding;
+    DrawerLayout drawerLayout;
     BottomNavigationView bottomNavigationView;
-    NavigationView navigationView;
+    FragmentManager fragmentManager;
+    Toolbar toolbar;
+    FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,36 +58,77 @@ public class MainActivity2 extends AppCompatActivity {
         View view=binding.getRoot();
         setContentView(view);
 
+        auth=FirebaseAuth.getInstance();
+        toolbar=findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        allFindViewById();
+        drawerLayout=findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
-    }
+        NavigationView navigationView=findViewById(R.id.navigation_drawer);
+        navigationView.setNavigationItemSelectedListener(this);
 
-    private void bottomNavigationItemSelected() {
-        bottomNavigationView.setOnItemSelectedListener(item -> {
+        bottomNavigationView=findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setBackground(null);
 
-            if (item.getItemId()==R.id.navigation_home){
-                replaceFragment(new HomeFragment());
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId()==R.id.nav_home){
+                    openFragment(new HomeFragment());
+                    return true;
+                } else if (item.getItemId()==R.id.nav_dashboard) {
+                    openFragment(new DashboardFragment());
+                    return  true;
+                }
+                return false;
             }
-            else if (item.getItemId()==R.id.navigation_dashboard) {
-                replaceFragment(new DashboardFragment());
-
-            }
-            return true;
         });
+
+
+        fragmentManager =getSupportFragmentManager();
+        openFragment(new HomeFragment());
+
+
     }
 
-    private  void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.commit();
+
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId=item.getItemId();
+        if (itemId==R.id.nav_about){
+            openFragment(new AboutFragment());
+        } else if (itemId==R.id.nav_contackUs) {
+            openFragment(new NotificationsFragment());
+        } else if (itemId==R.id.nav_share) {
+            openFragment(new ShareFragment());
+        } else if (itemId==R.id.nav_logout) {
+            auth.signOut();
+            Intent intent= new Intent(MainActivity2.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
 
-    private void allFindViewById() {
-        bottomNavigationView=findViewById(R.id.bottomNavigationView);
-        navigationView=findViewById(R.id.nav_view);
+        }
     }
-
+    private void openFragment(Fragment fragment){
+        FragmentTransaction transaction=fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container,fragment);
+        transaction.commit();
+    }
 }
