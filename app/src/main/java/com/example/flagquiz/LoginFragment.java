@@ -12,6 +12,7 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.flagquiz.databinding.FragmentLoginBinding;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -101,6 +102,7 @@ public class LoginFragment extends Fragment {
         binding.girisYapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                binding.progressBarLogin.setVisibility(View.VISIBLE);
                 email=binding.userEmailText.getText().toString();
                 password=binding.userPasswordText.getText().toString();
 
@@ -115,15 +117,23 @@ public class LoginFragment extends Fragment {
                                 Intent intent= new Intent(getContext(), MainActivity2.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
+                                binding.progressBarLogin.setVisibility(View.GONE);
+
                             }
                             else{
                                 Snackbar.make(view,"E-mail adresinizi doğrulayın!",Snackbar.LENGTH_SHORT).show();
+                                binding.progressBarLogin.setVisibility(View.GONE);
+
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            binding.progressBarLogin.setVisibility(View.VISIBLE);
+
                             Snackbar.make(view,e.getLocalizedMessage(),Snackbar.LENGTH_SHORT).show();
+                            binding.progressBarLogin.setVisibility(View.GONE);
+
                         }
                     });
                 }

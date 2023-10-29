@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.flagquiz.databinding.ActivityGameBinding;
@@ -59,6 +60,11 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         setContentView(view);
 
         auth=FirebaseAuth.getInstance();
+
+
+
+
+
         toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -107,10 +113,12 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
         } else if (itemId==R.id.nav_share) {
             openFragment(new ShareFragment());
         } else if (itemId==R.id.nav_logout) {
+            binding.progressBarM2.setVisibility(View.VISIBLE);
             auth.signOut();
             Intent intent= new Intent(MainActivity2.this, MainActivity.class);
             startActivity(intent);
             finish();
+            binding.progressBarM2.setVisibility(View.GONE);
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
