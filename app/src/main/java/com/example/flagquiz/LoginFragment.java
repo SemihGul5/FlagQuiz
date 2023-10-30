@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
@@ -51,6 +53,7 @@ public class LoginFragment extends Fragment {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
+
     }
 
     @Override
@@ -59,98 +62,17 @@ public class LoginFragment extends Fragment {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         return view;
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        goToSignin(view);
 
-        userLogin(view);
-        forgotPassword(view);
-    }
-
-    private void forgotPassword(View view) {
-        binding.textView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                email=binding.userEmailText.getText().toString();
-                if (email.equals("")){
-                    Snackbar.make(view,"E-mail alanı dolu olmalıdır!",Snackbar.LENGTH_SHORT).show();
-                }
-                else{
-                    auth.sendPasswordResetEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Snackbar.make(view,"Şifre sıfırlama e-mail'i gönderildi.",Snackbar.LENGTH_SHORT).show();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Snackbar.make(view,e.getLocalizedMessage(),Snackbar.LENGTH_SHORT).show();
-
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private void userLogin(View view) {
-        binding.girisYapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                binding.progressBarLogin.setVisibility(View.VISIBLE);
-                email=binding.userEmailText.getText().toString();
-                password=binding.userPasswordText.getText().toString();
-
-                if (email.equals("")||password.equals("")){
-                    Snackbar.make(view,"Email ve şifreyi girin.",Snackbar.LENGTH_SHORT).show();
-                }
-                else{
-                    auth.signInWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            if (Objects.requireNonNull(auth.getCurrentUser()).isEmailVerified()){
-                                Intent intent= new Intent(getContext(), MainActivity2.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                binding.progressBarLogin.setVisibility(View.GONE);
-
-                            }
-                            else{
-                                Snackbar.make(view,"E-mail adresinizi doğrulayın!",Snackbar.LENGTH_SHORT).show();
-                                binding.progressBarLogin.setVisibility(View.GONE);
-
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            binding.progressBarLogin.setVisibility(View.VISIBLE);
-
-                            Snackbar.make(view,e.getLocalizedMessage(),Snackbar.LENGTH_SHORT).show();
-                            binding.progressBarLogin.setVisibility(View.GONE);
-
-                        }
-                    });
-                }
-            }
-        });
 
     }
 
-    private void goToSignin(View view) {
-        binding.kayitOlButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavDirections directions=LoginFragmentDirections.actionLoginFragmentToSigninFragment();
-                Navigation.findNavController(view).navigate(directions);
 
-            }
-        });
-    }
 
 }
