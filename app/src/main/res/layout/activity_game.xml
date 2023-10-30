@@ -13,6 +13,8 @@
         android:layout_width="350dp"
         android:layout_height="26dp"
         android:layout_marginTop="16dp"
+        android:max="60"
+        android:progress="60"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/kalanSureText" />
@@ -30,79 +32,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/countryNameText"
+
+    <FrameLayout
+        android:id="@+id/gameFrameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
-        android:text="Ülke ismi"
-        android:textSize="22sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBarGame" />
-
-    <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/gridLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        app:alignmentMode="alignMargins"
-        app:columnCount="2"
-        app:layout_columnWeight="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countryNameText"
-        app:layout_gravity="fill"
-        app:layout_rowWeight="1"
-        app:rowCount="2"
-        app:useDefaultMargins="true">
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_home_black_24dp"
-            app:layout_columnWeight="1"
-            app:layout_rowWeight="1" />
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_home_black_24dp"
-            app:layout_columnWeight="1"
-            app:layout_rowWeight="1" />
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_home_black_24dp"
-            app:layout_columnWeight="1"
-            app:layout_rowWeight="1" />
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="4dp"
-            android:src="@drawable/ic_home_black_24dp"
-            app:layout_columnWeight="1"
-            app:layout_rowWeight="1" />
-    </androidx.gridlayout.widget.GridLayout>
+        app:layout_constraintTop_toBottomOf="@+id/progressBarGame"
+        />
 
     <Button
         android:id="@+id/button_game_skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="60dp"
         android:text="Atla"
         android:background="@drawable/icidolu_button_background"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gridLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/gameFrameLayout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

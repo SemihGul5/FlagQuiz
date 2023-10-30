@@ -20,7 +20,14 @@ public class GameActivity extends AppCompatActivity {
         binding=ActivityGameBinding.inflate(getLayoutInflater());
         View view=binding.getRoot();
         setContentView(view);
-        binding.progressBarGame.setProgress(100);
+
+        QuestionFragment questionFragment=new QuestionFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.gameFrameLayout, questionFragment)
+                .commit();
+
+
         binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
 
         new CountDownTimer(60000,1000) {
@@ -45,7 +52,6 @@ public class GameActivity extends AppCompatActivity {
                     binding.kalanSureText.setTextColor(getColor(R.color.Kırmızı));
                 }
             }
-
             @Override
             public void onFinish() {
                 binding.kalanSureText.setText("Süre doldu!");
@@ -53,10 +59,6 @@ public class GameActivity extends AppCompatActivity {
 
             }
         }.start();
-
-
-
-
     }
     @Override
     protected void onPause() {
@@ -65,6 +67,4 @@ public class GameActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-
 }
