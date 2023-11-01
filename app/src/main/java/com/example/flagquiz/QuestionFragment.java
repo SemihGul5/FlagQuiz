@@ -1,6 +1,7 @@
 package com.example.flagquiz;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,10 +30,12 @@ import java.util.Random;
 
 
 public class QuestionFragment extends Fragment {
+    private OnAnswerSelectedListener answerSelectedListener;
+
     private FragmentQuestionBinding binding;
     ArrayList<Country> countries;
     boolean ca;
-    int score=0;
+    private int score=0;
     Country country,falseCountry1,falseCountry2,falseCountry3;
 
     public QuestionFragment() {
@@ -40,8 +43,11 @@ public class QuestionFragment extends Fragment {
     }
 
 
-    public static QuestionFragment newInstance() {
+    public static QuestionFragment newInstance(int score) {
         QuestionFragment fragment = new QuestionFragment();
+        Bundle args = new Bundle();
+        args.putInt("score", fragment.score);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -55,16 +61,16 @@ public class QuestionFragment extends Fragment {
     private void getCorrectImage(int correctAnswer) {
         if (correctAnswer==1){
             binding.image1.setImageResource(country.getFlag());
-            ca=true;
+
         } else if (correctAnswer==2) {
             binding.image2.setImageResource(country.getFlag());
-            ca=true;
+
         } else if (correctAnswer==3) {
             binding.image3.setImageResource(country.getFlag());
-            ca=true;
+
         }else {
             binding.image4.setImageResource(country.getFlag());
-            ca=true;
+
         }
     }
 
@@ -81,11 +87,13 @@ public class QuestionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressbarAndTimer();
 
 
 
         getCountries();
+        if (getArguments() != null) {
+            score = getArguments().getInt("score", 0);
+        }
 
         Random random = new Random();
         int r = random.nextInt(countries.size());
@@ -129,46 +137,11 @@ public class QuestionFragment extends Fragment {
 
     }
 
-    private void progressbarAndTimer() {
-        binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
 
-        new CountDownTimer(60000,1000) {
-            @Override
-            public void onTick(long l) {
-
-                long sc=l/1000;
-                // Geri sayım her saniye gerçekleştiğinde burası çalışır
-                binding.kalanSureText.setText("Kalan süre "+l/1000);
-                int progressBarValue = (int) (l / 1000); // Kalan süre saniye cinsinden
-                binding.progressBarGame.setProgress(progressBarValue);
-
-                if (sc<=60&&sc>=40){
-                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
-                    binding.kalanSureText.setTextColor(binding.getRoot().getContext().getResources()
-                            .getColor(R.color.Yeşil));
-                } else if (sc<40&&sc>=20) {
-                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#FFEB3B"), PorterDuff.Mode.SRC_IN);
-                    binding.kalanSureText.setTextColor(binding.getRoot().getContext().getResources()
-                            .getColor(R.color.Sarı));
-                }
-                else {
-                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#F44336"), PorterDuff.Mode.SRC_IN);
-                    binding.kalanSureText.setTextColor(binding.getRoot().getContext().getResources()
-                            .getColor(R.color.Kırmızı));
-                }
-            }
-            @Override
-            public void onFinish() {
-                binding.kalanSureText.setText("Süre doldu!");
-                binding.progressBarGame.setProgress(0);
-
-            }
-        }.start();
-    }
 
     private void newFragment(){
         String dataToSend = "DogruCevap";
-        ((OnDataPassedListener) getActivity()).onDataPassed(dataToSend);
+        ((OnDataPassedListener) getActivity()).onDataPassed(dataToSend,score);
 
     }
 
@@ -178,6 +151,8 @@ public class QuestionFragment extends Fragment {
             public void onClick(View view) {
                 if (correctAnswer==1){
                     correctAnswerTransactions();
+                    answerSelectedListener.onAnswerSelected(true);
+
                 }
                 else{
                     binding.textView6.setText("Yanlış Cevap");
@@ -194,6 +169,8 @@ public class QuestionFragment extends Fragment {
             public void onClick(View view) {
                 if (correctAnswer==2){
                     correctAnswerTransactions();
+                    answerSelectedListener.onAnswerSelected(true);
+
                 }
                 else{
                     binding.textView6.setText("Yanlış Cevap");
@@ -206,7 +183,6 @@ public class QuestionFragment extends Fragment {
     }
     private void correctAnswerTransactions(){
         score++;
-        binding.scoreText.setText(String.valueOf(score));
         binding.textView6.setText("Doğru Cevap");
         binding.textView6.setTextColor(getResources().getColor(R.color.Yeşil));
         newFragment();
@@ -217,6 +193,7 @@ public class QuestionFragment extends Fragment {
             public void onClick(View view) {
                 if (correctAnswer==3){
                     correctAnswerTransactions();
+                    answerSelectedListener.onAnswerSelected(true);
 
                 }
                 else{
@@ -234,6 +211,8 @@ public class QuestionFragment extends Fragment {
             public void onClick(View view) {
                 if (correctAnswer==4){
                     correctAnswerTransactions();
+                    answerSelectedListener.onAnswerSelected(true);
+
                 }
                 else{
                     binding.textView6.setText("Yanlış Cevap");
@@ -288,7 +267,15 @@ public class QuestionFragment extends Fragment {
         }
     }
 
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            answerSelectedListener = (OnAnswerSelectedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " OnAnswerSelectedListener arayüzünü uygulamalıdır");
+        }
+    }
     private void getCountries() {
         countries.add(new Country("AFGANİSTAN",R.drawable.afganistan));
         countries.add(new Country("ALMANYA",R.drawable.almanya));
