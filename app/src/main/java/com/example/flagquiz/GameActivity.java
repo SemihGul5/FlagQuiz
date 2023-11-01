@@ -1,6 +1,7 @@
 package com.example.flagquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,7 +12,7 @@ import android.view.View;
 
 import com.example.flagquiz.databinding.ActivityGameBinding;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements OnDataPassedListener  {
     private ActivityGameBinding binding;
 
     @Override
@@ -28,37 +29,7 @@ public class GameActivity extends AppCompatActivity {
                 .commit();
 
 
-        binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
 
-        new CountDownTimer(60000,1000) {
-            @Override
-            public void onTick(long l) {
-
-                long sc=l/1000;
-                // Geri sayım her saniye gerçekleştiğinde burası çalışır
-                binding.kalanSureText.setText("Kalan süre "+l/1000);
-                int progressBarValue = (int) (l / 1000); // Kalan süre saniye cinsinden
-                binding.progressBarGame.setProgress(progressBarValue);
-
-                if (sc<=60&&sc>=40){
-                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
-                    binding.kalanSureText.setTextColor(getColor(R.color.Yeşil));
-                } else if (sc<40&&sc>=20) {
-                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#FFEB3B"), PorterDuff.Mode.SRC_IN);
-                    binding.kalanSureText.setTextColor(getColor(R.color.Sarı));
-                }
-                else {
-                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#F44336"), PorterDuff.Mode.SRC_IN);
-                    binding.kalanSureText.setTextColor(getColor(R.color.Kırmızı));
-                }
-            }
-            @Override
-            public void onFinish() {
-                binding.kalanSureText.setText("Süre doldu!");
-                binding.progressBarGame.setProgress(0);
-
-            }
-        }.start();
     }
     @Override
     protected void onPause() {
@@ -66,5 +37,16 @@ public class GameActivity extends AppCompatActivity {
         Intent intent= new Intent(GameActivity.this, MainActivity2.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onDataPassed(String data) {
+        // Veri geldiğinde yeni bir fragment oluşturun ve bu veriyi iletebilirsiniz.
+        QuestionFragment newFragment = new QuestionFragment();
+
+        // Yeni fragment'ı yüklemek için bir FragmentTransaction kullanın.
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.gameFrameLayout, newFragment);
+        transaction.commit();
     }
 }

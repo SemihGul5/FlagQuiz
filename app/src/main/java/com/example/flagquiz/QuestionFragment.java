@@ -1,14 +1,24 @@
 package com.example.flagquiz;
 
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.flagquiz.databinding.FragmentQuestionBinding;
 import com.example.flagquiz.databinding.FragmentSigninBinding;
@@ -21,7 +31,9 @@ import java.util.Random;
 public class QuestionFragment extends Fragment {
     private FragmentQuestionBinding binding;
     ArrayList<Country> countries;
-    Country country;
+    boolean ca;
+    int score=0;
+    Country country,falseCountry1,falseCountry2,falseCountry3;
 
     public QuestionFragment() {
         // Required empty public constructor
@@ -38,20 +50,21 @@ public class QuestionFragment extends Fragment {
         super.onCreate(savedInstanceState);
         countries = new ArrayList<>();
 
-
-
-
     }
 
     private void getCorrectImage(int correctAnswer) {
         if (correctAnswer==1){
             binding.image1.setImageResource(country.getFlag());
+            ca=true;
         } else if (correctAnswer==2) {
             binding.image2.setImageResource(country.getFlag());
+            ca=true;
         } else if (correctAnswer==3) {
             binding.image3.setImageResource(country.getFlag());
+            ca=true;
         }else {
             binding.image4.setImageResource(country.getFlag());
+            ca=true;
         }
     }
 
@@ -67,21 +80,214 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        progressbarAndTimer();
+
+
+
         getCountries();
 
+        Random random = new Random();
+        int r = random.nextInt(countries.size());
 
-        Random random= new Random();
-        int r=random.nextInt(countries.size());
-
-        country= countries.get(r);
+        country = countries.get(r);
 
         binding.countryNameText.setText(country.getCountryName());
-        int correctAnswer=random.nextInt(4)+1;
+        int correctAnswer = random.nextInt(4) + 1;
 
+        // Doğru yanıt
         getCorrectImage(correctAnswer);
 
-        //doğru yanıt
+        // Yanlış cevaplar
+        int falseAnswer1, falseAnswer2, falseAnswer3;
+
+        // Yanlış cevapları farklı seçene kadar tekrar seç
+        do {
+            falseAnswer1 = random.nextInt(countries.size());
+        } while (falseAnswer1 == r);
+
+        do {
+            falseAnswer2 = random.nextInt(countries.size());
+        } while (falseAnswer2 == r || falseAnswer2 == falseAnswer1);
+
+        do {
+            falseAnswer3 = random.nextInt(countries.size());
+        } while (falseAnswer3 == r || falseAnswer3 == falseAnswer1 || falseAnswer3 == falseAnswer2);
+
+        falseCountry1 = countries.get(falseAnswer1);
+        falseCountry2 = countries.get(falseAnswer2);
+        falseCountry3 = countries.get(falseAnswer3);
+
+        getFalseAnswarImage(correctAnswer,falseCountry1,falseCountry2,falseCountry3);
+
+
+        image1Clicked(view,correctAnswer);
+        image2Clicked(view,correctAnswer);
+        image3Clicked(view,correctAnswer);
+        image4Clicked(view,correctAnswer);
+
+
     }
+
+    private void progressbarAndTimer() {
+        binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
+
+        new CountDownTimer(60000,1000) {
+            @Override
+            public void onTick(long l) {
+
+                long sc=l/1000;
+                // Geri sayım her saniye gerçekleştiğinde burası çalışır
+                binding.kalanSureText.setText("Kalan süre "+l/1000);
+                int progressBarValue = (int) (l / 1000); // Kalan süre saniye cinsinden
+                binding.progressBarGame.setProgress(progressBarValue);
+
+                if (sc<=60&&sc>=40){
+                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
+                    binding.kalanSureText.setTextColor(binding.getRoot().getContext().getResources()
+                            .getColor(R.color.Yeşil));
+                } else if (sc<40&&sc>=20) {
+                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#FFEB3B"), PorterDuff.Mode.SRC_IN);
+                    binding.kalanSureText.setTextColor(binding.getRoot().getContext().getResources()
+                            .getColor(R.color.Sarı));
+                }
+                else {
+                    binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#F44336"), PorterDuff.Mode.SRC_IN);
+                    binding.kalanSureText.setTextColor(binding.getRoot().getContext().getResources()
+                            .getColor(R.color.Kırmızı));
+                }
+            }
+            @Override
+            public void onFinish() {
+                binding.kalanSureText.setText("Süre doldu!");
+                binding.progressBarGame.setProgress(0);
+
+            }
+        }.start();
+    }
+
+    private void newFragment(){
+        String dataToSend = "DogruCevap";
+        ((OnDataPassedListener) getActivity()).onDataPassed(dataToSend);
+
+    }
+
+    private void image1Clicked(View view,int correctAnswer) {
+        binding.image1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (correctAnswer==1){
+                    correctAnswerTransactions();
+                }
+                else{
+                    binding.textView6.setText("Yanlış Cevap");
+                    binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
+                    alldisabled();
+                    showAlertDialog();
+                }
+            }
+        });
+    }
+    private void image2Clicked(View view,int correctAnswer) {
+        binding.image2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (correctAnswer==2){
+                    correctAnswerTransactions();
+                }
+                else{
+                    binding.textView6.setText("Yanlış Cevap");
+                    binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
+                    alldisabled();
+                    showAlertDialog();
+                }
+            }
+        });
+    }
+    private void correctAnswerTransactions(){
+        score++;
+        binding.scoreText.setText(String.valueOf(score));
+        binding.textView6.setText("Doğru Cevap");
+        binding.textView6.setTextColor(getResources().getColor(R.color.Yeşil));
+        newFragment();
+    }
+    private void image3Clicked(View view,int correctAnswer) {
+        binding.image3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (correctAnswer==3){
+                    correctAnswerTransactions();
+
+                }
+                else{
+                    binding.textView6.setText("Yanlış Cevap");
+                    binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
+                    alldisabled();
+                    showAlertDialog();
+                }
+            }
+        });
+    }
+    private void image4Clicked(View view,int correctAnswer) {
+        binding.image4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (correctAnswer==4){
+                    correctAnswerTransactions();
+                }
+                else{
+                    binding.textView6.setText("Yanlış Cevap");
+                    binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
+                    alldisabled();
+                    showAlertDialog();
+                }
+            }
+        });
+    }
+    private void alldisabled() {
+        binding.image1.setEnabled(false);
+        binding.image2.setEnabled(false);
+        binding.image3.setEnabled(false);
+        binding.image4.setEnabled(false);
+        binding.buttonGameSkip.setEnabled(false);
+
+    }
+
+    private void showAlertDialog() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+        builder.setTitle("Oyun Bitti");
+        builder.setMessage("Yanlış cevap verdiniz");
+        builder.setPositiveButton("Kapat", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent=new Intent(getContext(), MainActivity2.class);
+                startActivity(intent);
+            }
+        });
+        builder.show();
+    }
+
+
+    private void getFalseAnswarImage(int correctAnswer,Country falseCountry1,Country falseCountry2,Country falseCountry3) {
+        if (correctAnswer==1){
+            binding.image2.setImageResource(falseCountry1.getFlag());
+            binding.image3.setImageResource(falseCountry2.getFlag());
+            binding.image4.setImageResource(falseCountry3.getFlag());
+        } else if (correctAnswer==2) {
+            binding.image1.setImageResource(falseCountry1.getFlag());
+            binding.image3.setImageResource(falseCountry2.getFlag());
+            binding.image4.setImageResource(falseCountry3.getFlag());
+        } else if (correctAnswer==3) {
+            binding.image1.setImageResource(falseCountry1.getFlag());
+            binding.image2.setImageResource(falseCountry2.getFlag());
+            binding.image4.setImageResource(falseCountry3.getFlag());
+        }else {
+            binding.image1.setImageResource(falseCountry1.getFlag());
+            binding.image2.setImageResource(falseCountry2.getFlag());
+            binding.image3.setImageResource(falseCountry3.getFlag());
+        }
+    }
+
 
     private void getCountries() {
         countries.add(new Country("AFGANİSTAN",R.drawable.afganistan));
