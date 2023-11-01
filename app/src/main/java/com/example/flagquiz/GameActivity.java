@@ -1,5 +1,7 @@
 package com.example.flagquiz;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -9,12 +11,30 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.flagquiz.databinding.ActivityGameBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Map;
 
 public class GameActivity extends AppCompatActivity implements OnDataPassedListener,OnAnswerSelectedListener  {
     private ActivityGameBinding binding;
     private int score;
+
+    FirebaseFirestore firestore;
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +42,8 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
         binding=ActivityGameBinding.inflate(getLayoutInflater());
         View view=binding.getRoot();
         setContentView(view);
+        auth=FirebaseAuth.getInstance();
+        firestore=FirebaseFirestore.getInstance();
 
         QuestionFragment questionFragment=new QuestionFragment();
 
@@ -35,7 +57,7 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
     private void progressbarAndTimer() {
         binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
 
-        new CountDownTimer(60000,1000) {
+        new CountDownTimer(10000,1000) {
             @Override
             public void onTick(long l) {
 
@@ -64,9 +86,54 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
             public void onFinish() {
                 binding.kalanSureText.setText("Süre doldu!");
                 binding.progressBarGame.setProgress(0);
+                //eğer score önceki scoredan yüksekse değiştir.
+
+                if (auth.getCurrentUser() != null) {
+                    firestore.collection("Users").whereEqualTo("email", auth.getCurrentUser().getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (error != null) {
+                                Toast.makeText(GameActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            if (value != null) {
+                                for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
+                                    Map<String, Object> data = documentSnapshot.getData();
+                                    String sscore = (String) data.get("score");
+                                    int nscore=Integer.parseInt(sscore);
+                                    if (score>nscore){
+                                        //yeni score'u kaydet
+                                        updateFirebase();
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                Intent intent=new Intent(GameActivity.this, MainActivity2.class);
+                startActivity(intent);
+                finish();
 
             }
         }.start();
+    }
+    private void updateFirebase() {
+        Query query=firestore.collection("Users").whereEqualTo("email",auth.getCurrentUser().getEmail());
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    // Belirli bir kritere uyan belgeyi güncelle
+                    String userId = document.getId();
+                    String newScore=String.valueOf(score);
+                    firestore.collection("Users").document(userId).update("score", newScore);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(GameActivity.this,e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     @Override
     protected void onPause() {
@@ -78,10 +145,10 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
 
     @Override
     public void onDataPassed(String data,int score) {
-        // Veri geldiğinde yeni bir fragment oluşturun ve bu veriyi iletebilirsiniz.
+        // Veri geldiğinde yeni bir fragment oluşturun ve bu veriyi ilet.
         QuestionFragment newFragment = QuestionFragment.newInstance(score);
 
-        // Yeni fragment'ı yüklemek için bir FragmentTransaction kullanın.
+        // Yeni fragment'ı yüklemek için bir FragmentTransaction kullan.
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.gameFrameLayout, newFragment);
         transaction.commit();
@@ -91,8 +158,8 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
     @Override
     public void onAnswerSelected(boolean isCorrect) {
         if (isCorrect) {
-            score++;  // Puanı artırın
-            binding.scoreText.setText(String.valueOf(score));  // Gösterilen puanı güncelleyin
+            score++;
+            binding.scoreText.setText(String.valueOf(score));  // Gösterilen puanı güncelle
         }
     }
 }

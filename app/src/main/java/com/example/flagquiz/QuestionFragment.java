@@ -23,9 +23,20 @@ import android.widget.Toast;
 
 import com.example.flagquiz.databinding.FragmentQuestionBinding;
 import com.example.flagquiz.databinding.FragmentSigninBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -36,6 +47,9 @@ public class QuestionFragment extends Fragment {
     ArrayList<Country> countries;
     boolean ca;
     private int score=0;
+    FirebaseAuth auth;
+    FirebaseUser user;
+    FirebaseFirestore firestore;
     Country country,falseCountry1,falseCountry2,falseCountry3;
 
     public QuestionFragment() {
@@ -55,6 +69,9 @@ public class QuestionFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         countries = new ArrayList<>();
+        auth=FirebaseAuth.getInstance();
+        user=auth.getCurrentUser();
+        firestore=FirebaseFirestore.getInstance();
 
     }
 
@@ -136,7 +153,45 @@ public class QuestionFragment extends Fragment {
 
 
     }
+    private void falseAnswerFirebaseUpdate(){
+        if (user != null) {
+            firestore.collection("Users").whereEqualTo("email", user.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if (error != null) {
+                        Toast.makeText(getContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    if (value != null) {
+                        for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
+                            Map<String, Object> data = documentSnapshot.getData();
+                                String sscore = (String) data.get("score");
+                                int nscore=Integer.parseInt(sscore);
+                                if (score>nscore){
+                                    //yeni score'u kaydet
+                                    updateFirebase();
+                                }
+                        }
+                    }
+                }
+            });
+        }
+    }
 
+    private void updateFirebase() {
+        DocumentReference reference=firestore.collection("Users").document(user.getUid());
+        reference.update("score",score).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(getContext(),"Skor Güncellendi",Toast.LENGTH_SHORT).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(),e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     private void newFragment(){
@@ -159,6 +214,7 @@ public class QuestionFragment extends Fragment {
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
                     showAlertDialog();
+                    falseAnswerFirebaseUpdate();
                 }
             }
         });
@@ -177,6 +233,8 @@ public class QuestionFragment extends Fragment {
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
                     showAlertDialog();
+                    falseAnswerFirebaseUpdate();
+
                 }
             }
         });
@@ -201,6 +259,8 @@ public class QuestionFragment extends Fragment {
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
                     showAlertDialog();
+                    falseAnswerFirebaseUpdate();
+
                 }
             }
         });
@@ -219,6 +279,8 @@ public class QuestionFragment extends Fragment {
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
                     showAlertDialog();
+                    falseAnswerFirebaseUpdate();
+
                 }
             }
         });
@@ -239,8 +301,11 @@ public class QuestionFragment extends Fragment {
         builder.setPositiveButton("Kapat", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                falseAnswerFirebaseUpdate();
+
                 Intent intent=new Intent(getContext(), MainActivity2.class);
                 startActivity(intent);
+
             }
         });
         builder.show();

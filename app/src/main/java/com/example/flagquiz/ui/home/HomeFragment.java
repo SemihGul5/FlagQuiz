@@ -96,10 +96,9 @@ public class HomeFragment extends Fragment {
                         for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
                             Map<String, Object> data = documentSnapshot.getData();
 
-                            score = (String) data.get("score");
-                            if (binding.textViewMyHighScore!=null){
-                                binding.textViewMyHighScore.setText("En Yüksek Puanım: "+score);
-
+                            if (binding != null && binding.textViewMyHighScore != null) {
+                                score = (String) data.get("score");
+                                binding.textViewMyHighScore.setText("En Yüksek Puanım: " + score);
                             }
                             else{
                                 binding.textViewMyHighScore.setText("null??");

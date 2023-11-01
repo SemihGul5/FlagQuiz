@@ -92,6 +92,8 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
 
         toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("Flag Quiz");
+
 
         drawerLayout=findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
