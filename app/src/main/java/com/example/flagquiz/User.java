@@ -1,5 +1,7 @@
 package com.example.flagquiz;
 
+import org.jetbrains.annotations.Nullable;
+
 public class User {
     private String name_family;
     private String userName;
@@ -8,13 +10,20 @@ public class User {
     private String kalanHak;
     private String docId;
 
-    public User(String name_family, String userName, String eMail, String score, String kalanHak,String docId) {
+    public User(String name_family, String userName, String eMail, String score, String kalanHak, String docId) {
         this.name_family = name_family;
         this.userName = userName;
         this.eMail = eMail;
         this.score = score;
         this.kalanHak = kalanHak;
         this.docId=docId;
+    }
+    public User(String name_family, String userName, String eMail, String score, String kalanHak) {
+        this.name_family = name_family;
+        this.userName = userName;
+        this.eMail = eMail;
+        this.score = score;
+        this.kalanHak = kalanHak;
     }
 
     public String getDocId() {
