@@ -285,7 +285,7 @@ public class QuestionFragment extends Fragment {
             }
         });
     }
-    private void alldisabled() {
+    public void alldisabled() {
         binding.image1.setEnabled(false);
         binding.image2.setEnabled(false);
         binding.image3.setEnabled(false);
@@ -298,6 +298,7 @@ public class QuestionFragment extends Fragment {
         AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
         builder.setTitle("Oyun Bitti");
         builder.setMessage("Yanlış cevap verdiniz");
+        builder.setCancelable(false);
         builder.setPositiveButton("Kapat", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

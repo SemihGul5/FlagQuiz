@@ -2,9 +2,11 @@ package com.example.flagquiz;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -109,13 +111,29 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
                         }
                     });
                 }
+                showAlertDialog();
+            }
+        }.start();
+    }
+    private void showAlertDialog() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(getApplicationContext());
+        builder.setTitle("Oyun Bitti");
+        builder.setMessage("Süre Doldu !");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Kapat", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
                 Intent intent=new Intent(GameActivity.this, MainActivity2.class);
                 startActivity(intent);
                 finish();
 
             }
-        }.start();
+        });
+        builder.show();
     }
+
     private void updateFirebase() {
         Query query=firestore.collection("Users").whereEqualTo("email",auth.getCurrentUser().getEmail());
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

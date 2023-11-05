@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.flagquiz.GameActivity;
 import com.example.flagquiz.MainActivity2;
+import com.example.flagquiz.R;
 import com.example.flagquiz.User;
 import com.example.flagquiz.databinding.FragmentHomeBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +35,7 @@ public class HomeFragment extends Fragment {
     FirebaseUser user;
     FirebaseFirestore firestore;
     String score;
+    TextView highScore;
 
 
     @Override
@@ -43,7 +45,6 @@ public class HomeFragment extends Fragment {
         auth=FirebaseAuth.getInstance();
         user=FirebaseAuth.getInstance().getCurrentUser();
         firestore=FirebaseFirestore.getInstance();
-
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        highScore=view.findViewById(R.id.textViewMyHighScore);
         goToGame(view);
 
         getEmailAndUserName();
@@ -73,7 +75,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(getContext(), GameActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -95,16 +96,8 @@ public class HomeFragment extends Fragment {
                     if (value != null) {
                         for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
                             Map<String, Object> data = documentSnapshot.getData();
-
-                            if (binding != null && binding.textViewMyHighScore != null) {
                                 score = (String) data.get("score");
-                                binding.textViewMyHighScore.setText("En Yüksek Puanım: " + score);
-                            }
-                            else{
-                                binding.textViewMyHighScore.setText("null??");
-
-                            }
-
+                                highScore.setText("En Yüksek Puanım: " + score);
 
                         }
                     }
