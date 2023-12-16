@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -38,6 +39,7 @@ public class SignInActivity extends AppCompatActivity {
     String email;
     String password;
     String passwordRetry;
+    boolean isEmailAlready;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +82,6 @@ public class SignInActivity extends AppCompatActivity {
                                 if (task.isSuccessful()){
                                     if (task.getResult().isEmpty()){
                                         //kullanıcı adı yok, diğer yerler tamam. kaydet.
-                                        saveInFireStoreUserNameCollection(userName,email,name);
                                         //saveInFireStoreUserCollection();
                                         saveAuthUser(email,password,view);
                                         binding.progressBarSignIn.setVisibility(View.GONE);
@@ -113,48 +114,59 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
     private void saveAuthUser(String email,String password,View view){
-        auth.createUserWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+        auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onSuccess(AuthResult authResult) {
-                FirebaseUser user=auth.getCurrentUser();//oluşturulan userı aldık, mail göndermek için
-                sendEmail(user,view);//aktivasyon maili gönderilecek
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Snackbar.make(view,e.getLocalizedMessage(),Snackbar.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    FirebaseUser user=auth.getCurrentUser();//oluşturulan userı aldık, mail göndermek için
+                    sendEmail(user,view);//aktivasyon maili gönderilecek
+                    saveInFireStoreUserNameCollection(userName,email,name);
+
+                }else{
+                    Exception exception = task.getException();
+                    if (exception instanceof FirebaseAuthUserCollisionException) {
+                        // E-posta zaten kayıtlı, kullanıcıyı bilgilendir veya işlem yap
+                        Snackbar.make(view,"E posta zaten kayıtlı",Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        // Diğer hataları işle
+                        Snackbar.make(view,exception.getLocalizedMessage(),Snackbar.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
+
     }
     private void saveInFireStoreUserNameCollection(String userName,String email,String nf){
-        HashMap<String, String> data=new HashMap<>();
-        String userNameUpper=userName.toUpperCase();
-        data.put("name_family",nf);
-        data.put("userName",userNameUpper);
-        data.put("email",email);
-        data.put("kalanHak","5");
-        data.put("score","0");
 
-        firestore.collection("Users").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                //kullanıcı adı kayıt başarılı, mesaj göstermeye gerek yok
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(SignInActivity.this,e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
-            }
-        });
+            HashMap<String, String> data=new HashMap<>();
+            String userNameUpper=userName.toUpperCase();
+            data.put("name_family",nf);
+            data.put("userName",userNameUpper);
+            data.put("email",email);
+            data.put("kalanHak","5");
+            data.put("score","0");
+
+            firestore.collection("Users").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    //kullanıcı adı kayıt başarılı, mesaj göstermeye gerek yok
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(SignInActivity.this,e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                }
+            });
 
     }
     private void sendEmail(FirebaseUser user,View view){
         user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-                NavDirections directions=SigninFragmentDirections.actionSigninFragmentToLoginFragment();
-                Navigation.findNavController(view).navigate(directions);
                 Toast.makeText(SignInActivity.this,"Email gönderildi, hesabınızı doğrulayın.",Toast.LENGTH_SHORT).show();
+                Intent intent= new Intent(SignInActivity.this,MainActivity.class);
+                startActivity(intent);
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
