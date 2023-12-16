@@ -52,6 +52,7 @@ public class QuestionFragment extends Fragment {
     FirebaseFirestore firestore;
     Country country,falseCountry1,falseCountry2,falseCountry3;
     private OnAlertDialogDismissListener alertDialogDismissListener;
+    private List<Integer> usedCountryIndexes = new ArrayList<>(); // Kullanılan ülkelerin indekslerini saklamak için
 
 
 
@@ -108,16 +109,23 @@ public class QuestionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
-
         getCountries();
         if (getArguments() != null) {
             score = getArguments().getInt("score", 0);
         }
 
         Random random = new Random();
-        int r = random.nextInt(countries.size());
+        if (usedCountryIndexes.size() == countries.size()) {
+            // Tüm ülkeler kullanıldı, sıfırla
+            usedCountryIndexes.clear();
+        }
+        int r;
+
+        do {
+            r = random.nextInt(countries.size());
+        } while (usedCountryIndexes.contains(r));
+
+        usedCountryIndexes.add(r);
 
         country = countries.get(r);
 
@@ -155,8 +163,66 @@ public class QuestionFragment extends Fragment {
         image3Clicked(view,correctAnswer);
         image4Clicked(view,correctAnswer);
 
+        binding.buttonGameSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                generateNewQuestion(view);
+            }
+        });
+    }
+    private void generateNewQuestion(View view) {
+
+        getCountries();
+        if (getArguments() != null) {
+            score = getArguments().getInt("score", 0);
+        }
+        Random random = new Random();
+        int r;
+
+        do {
+            r = random.nextInt(countries.size());
+        } while (usedCountryIndexes.contains(r));
+
+        usedCountryIndexes.add(r);
+
+        country = countries.get(r);
+
+        binding.countryNameText.setText(country.getCountryName());
+        int correctAnswer = random.nextInt(4) + 1;
+
+        // Doğru yanıt
+        getCorrectImage(correctAnswer);
+
+        // Yanlış cevaplar
+        int falseAnswer1, falseAnswer2, falseAnswer3;
+
+        // Yanlış cevapları farklı seçene kadar tekrar seç
+        do {
+            falseAnswer1 = random.nextInt(countries.size());
+        } while (falseAnswer1 == r);
+
+        do {
+            falseAnswer2 = random.nextInt(countries.size());
+        } while (falseAnswer2 == r || falseAnswer2 == falseAnswer1);
+
+        do {
+            falseAnswer3 = random.nextInt(countries.size());
+        } while (falseAnswer3 == r || falseAnswer3 == falseAnswer1 || falseAnswer3 == falseAnswer2);
+
+        falseCountry1 = countries.get(falseAnswer1);
+        falseCountry2 = countries.get(falseAnswer2);
+        falseCountry3 = countries.get(falseAnswer3);
+
+        getFalseAnswarImage(correctAnswer,falseCountry1,falseCountry2,falseCountry3);
+
+
+        image1Clicked(view,correctAnswer);
+        image2Clicked(view,correctAnswer);
+        image3Clicked(view,correctAnswer);
+        image4Clicked(view,correctAnswer);
 
     }
+
     private void falseAnswerFirebaseUpdate(){
         if (user != null) {
             firestore.collection("Users").whereEqualTo("email", user.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {

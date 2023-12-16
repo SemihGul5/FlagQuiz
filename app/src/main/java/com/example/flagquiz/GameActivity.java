@@ -70,7 +70,7 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
             @Override
             public void onTick(long l) {
 
-                long sc=l/1000;
+                long sc=l/1000000;
                 // Geri sayım her saniye gerçekleştiğinde burası çalışır
                 binding.kalanSureText.setText("Kalan süre "+l/1000);
                 int progressBarValue = (int) (l / 1000); // Kalan süre saniye cinsinden
@@ -119,7 +119,7 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
                         }
                     });
                 }
-                showAlertDialog("Oyun Bitti","Süre Doldu !");
+                showAlertDialog("Oyun Bitti","Süre Doldu ! Puanınız : "+score);
             }
         }.start();
     }
