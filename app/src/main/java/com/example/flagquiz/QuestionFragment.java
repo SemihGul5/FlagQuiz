@@ -51,6 +51,10 @@ public class QuestionFragment extends Fragment {
     FirebaseUser user;
     FirebaseFirestore firestore;
     Country country,falseCountry1,falseCountry2,falseCountry3;
+    private OnAlertDialogDismissListener alertDialogDismissListener;
+
+
+
 
     public QuestionFragment() {
         // Required empty public constructor
@@ -213,8 +217,10 @@ public class QuestionFragment extends Fragment {
                     binding.textView6.setText("Yanlış Cevap");
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
-                    showAlertDialog();
+                    //showAlertDialog();
                     falseAnswerFirebaseUpdate();
+                    alertDialogDismissListener.onAlertDialogDismissed(true);
+
                 }
             }
         });
@@ -226,14 +232,14 @@ public class QuestionFragment extends Fragment {
                 if (correctAnswer==2){
                     correctAnswerTransactions();
                     answerSelectedListener.onAnswerSelected(true);
-
                 }
                 else{
                     binding.textView6.setText("Yanlış Cevap");
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
-                    showAlertDialog();
+                    //showAlertDialog();
                     falseAnswerFirebaseUpdate();
+                    alertDialogDismissListener.onAlertDialogDismissed(true);
 
                 }
             }
@@ -258,8 +264,9 @@ public class QuestionFragment extends Fragment {
                     binding.textView6.setText("Yanlış Cevap");
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
-                    showAlertDialog();
+                    //showAlertDialog();
                     falseAnswerFirebaseUpdate();
+                    alertDialogDismissListener.onAlertDialogDismissed(true);
 
                 }
             }
@@ -272,14 +279,14 @@ public class QuestionFragment extends Fragment {
                 if (correctAnswer==4){
                     correctAnswerTransactions();
                     answerSelectedListener.onAnswerSelected(true);
-
                 }
                 else{
                     binding.textView6.setText("Yanlış Cevap");
                     binding.textView6.setTextColor(getResources().getColor(R.color.Kırmızı));
                     alldisabled();
-                    showAlertDialog();
+                    //showAlertDialog();
                     falseAnswerFirebaseUpdate();
+                    alertDialogDismissListener.onAlertDialogDismissed(true);
 
                 }
             }
@@ -294,7 +301,7 @@ public class QuestionFragment extends Fragment {
 
     }
 
-    private void showAlertDialog() {
+    /*private void showAlertDialog() {
         AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
         builder.setTitle("Oyun Bitti");
         builder.setMessage("Yanlış cevap verdiniz");
@@ -310,7 +317,7 @@ public class QuestionFragment extends Fragment {
             }
         });
         builder.show();
-    }
+    }*/
 
 
     private void getFalseAnswarImage(int correctAnswer,Country falseCountry1,Country falseCountry2,Country falseCountry3) {
@@ -338,6 +345,7 @@ public class QuestionFragment extends Fragment {
         super.onAttach(context);
         try {
             answerSelectedListener = (OnAnswerSelectedListener) context;
+            alertDialogDismissListener = (OnAlertDialogDismissListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " OnAnswerSelectedListener arayüzünü uygulamalıdır");
         }

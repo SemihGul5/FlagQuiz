@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,24 +32,30 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Map;
 
-public class GameActivity extends AppCompatActivity implements OnDataPassedListener,OnAnswerSelectedListener  {
+public class GameActivity extends AppCompatActivity implements OnDataPassedListener,OnAnswerSelectedListener,OnAlertDialogDismissListener {
     private ActivityGameBinding binding;
     private int score;
 
     FirebaseFirestore firestore;
     FirebaseAuth auth;
-
+    private CountDownTimer timer;
+    private OnNewScoreListener scoreListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityGameBinding.inflate(getLayoutInflater());
-        View view=binding.getRoot();
+        binding = ActivityGameBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
         setContentView(view);
-        auth=FirebaseAuth.getInstance();
-        firestore=FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
 
-        QuestionFragment questionFragment=new QuestionFragment();
+        QuestionFragment questionFragment = new QuestionFragment();
+        scoreListener = new OnNewScoreListener() {
+            @Override
+            public void scoreUpdate(int newScore) {
 
+            }
+        };
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.gameFrameLayout, questionFragment)
                 .commit();
@@ -59,7 +66,7 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
     private void progressbarAndTimer() {
         binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
 
-        new CountDownTimer(10000,1000) {
+        timer=new CountDownTimer(10000,1000) {
             @Override
             public void onTick(long l) {
 
@@ -105,34 +112,34 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
                                     if (score>nscore){
                                         //yeni score'u kaydet
                                         updateFirebase();
+                                        scoreListener.scoreUpdate(score);
                                     }
                                 }
                             }
                         }
                     });
                 }
-                showAlertDialog();
+                showAlertDialog("Oyun Bitti","Süre Doldu !");
             }
         }.start();
     }
-    private void showAlertDialog() {
-        AlertDialog.Builder builder=new AlertDialog.Builder(getApplicationContext());
-        builder.setTitle("Oyun Bitti");
-        builder.setMessage("Süre Doldu !");
+    private void showAlertDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+        builder.setTitle(title);
+        builder.setMessage(message);
         builder.setCancelable(false);
 
         builder.setPositiveButton("Kapat", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
-                Intent intent=new Intent(GameActivity.this, MainActivity2.class);
+                Intent intent = new Intent(GameActivity.this, MainActivity2.class);
                 startActivity(intent);
                 finish();
-
             }
         });
         builder.show();
     }
+
 
     private void updateFirebase() {
         Query query=firestore.collection("Users").whereEqualTo("email",auth.getCurrentUser().getEmail());
@@ -180,4 +187,14 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
             binding.scoreText.setText(String.valueOf(score));  // Gösterilen puanı güncelle
         }
     }
+
+    @Override
+    public void onAlertDialogDismissed(boolean isGet) {
+        if(isGet){
+            timer.cancel();
+            showAlertDialog("Oyun Bitti","Yanlış cevap verdiniz !");
+
+        }
+    }
+
 }

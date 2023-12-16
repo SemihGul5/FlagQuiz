@@ -15,21 +15,27 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.flagquiz.GameActivity;
+import com.example.flagquiz.OnNewScoreListener;
 import com.example.flagquiz.ScoreAdapter;
 import com.example.flagquiz.User;
 import com.example.flagquiz.databinding.FragmentDashboardBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-public class DashboardFragment extends Fragment {
+public class DashboardFragment extends Fragment implements OnNewScoreListener {
 
     private FragmentDashboardBinding binding;
     String score,userName;
@@ -78,7 +84,7 @@ public class DashboardFragment extends Fragment {
     private void getAllScores(){
         userArrayList.clear();
         if (user!=null){
-            firestore.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            firestore.collection("Users").orderBy("score", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -130,5 +136,26 @@ public class DashboardFragment extends Fragment {
                 }
             });
         }
+    }
+
+    @Override
+    public void scoreUpdate(int newScore) {
+        Query query=firestore.collection("Users").whereEqualTo("email",auth.getCurrentUser().getEmail());
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    // Belirli bir kritere uyan belgeyi güncelle
+                    String userId = document.getId();
+                    String newScore=String.valueOf(score);
+                    firestore.collection("Users").document(userId).update("score", newScore);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(),e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

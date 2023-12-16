@@ -27,6 +27,11 @@
         <item name="titleTextColor">@color/white</item>
 
     </style>
+    <style name="Base.Theme.GameActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
 
     <style name="Base.Theme.Game" parent="Theme.MaterialComponents.Light.Bridge">
         <item name="colorPrimary">@color/appColor</item>
