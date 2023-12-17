@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,7 +75,9 @@ public class SettingsFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String selected=arrayAdapter.getItem(i);
                 if (selected.equals("Şifreyi Değiştir")){
-                    Toast.makeText(getContext(), "Şifreyi Değiştir", Toast.LENGTH_SHORT).show();
+                    NavController navController= Navigation.findNavController(view);
+                    navController.navigate(R.id.action_settingsFragment_to_passwordChangeFragment);
+
                 } else if (selected.equals("Kullanıcı Adı Değiştir")) {
                     Toast.makeText(getContext(), "Kullanıcı adı değiştir", Toast.LENGTH_SHORT).show();
                 } else if (selected.equals("E - mail Değiştir")) {
