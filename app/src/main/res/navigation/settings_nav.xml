@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_passwordChangeFragment"
             app:destination="@id/passwordChangeFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_userNameChangeFragment"
+            app:destination="@id/userNameChangeFragment" />
     </fragment>
     <fragment
         android:id="@+id/passwordChangeFragment"
@@ -21,6 +24,15 @@
         tools:layout="@layout/fragment_password_change" >
         <action
             android:id="@+id/action_passwordChangeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userNameChangeFragment"
+        android:name="com.example.flagquiz.ui.settings.UserNameChangeFragment"
+        android:label="fragment_user_name_change"
+        tools:layout="@layout/fragment_user_name_change" >
+        <action
+            android:id="@+id/action_userNameChangeFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
     </fragment>
 </navigation>

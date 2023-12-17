@@ -42,6 +42,8 @@ public class PasswordChangeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         auth=FirebaseAuth.getInstance();
         user=auth.getCurrentUser();
+        allEnabled(true);
+
     }
 
     @Override
@@ -50,6 +52,7 @@ public class PasswordChangeFragment extends Fragment {
         binding = FragmentPasswordChangeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         return  root;
+
     }
 
     @Override
@@ -62,8 +65,18 @@ public class PasswordChangeFragment extends Fragment {
             }
         });
     }
+    private void allEnabled(boolean enabledStatus){
+        binding.oldPasswordText.setEnabled(enabledStatus);
+        binding.newPasswordText.setEnabled(enabledStatus);
+        binding.newPasswordRetryText.setEnabled(enabledStatus);
+        binding.passwordUpdateButton.setEnabled(enabledStatus);
+    }
 
     private void passwordUpdateButtonClicked(View view) {
+        binding.progressBarSettingsPasswordChange.setVisibility(view.VISIBLE);
+        allEnabled(false);
+
+
         if (user != null) {
             String oldPassword = binding.oldPasswordText.getText().toString();
             String newPassword = binding.newPasswordText.getText().toString();
@@ -79,29 +92,41 @@ public class PasswordChangeFragment extends Fragment {
                                     user.updatePassword(newPassword)
                                             .addOnCompleteListener(updateTask -> {
                                                 if (updateTask.isSuccessful()) {
+                                                    binding.progressBarSettingsPasswordChange.setVisibility(view.GONE);
                                                     // Şifre değiştirme başarılı
                                                     Toast.makeText(getContext(), "Şifre başarıyla değiştirildi.", Toast.LENGTH_SHORT).show();
                                                     //textboxların içini sil
                                                     binding.oldPasswordText.setText("");
                                                     binding.newPasswordText.setText("");
                                                     binding.newPasswordRetryText.setText("");
+                                                    allEnabled(true);
+
                                                     //ayarlar fragmentına geri dön
                                                     NavController navController= Navigation.findNavController(view);
                                                     navController.navigate(R.id.action_passwordChangeFragment_to_settingsFragment);
                                                 } else {
+                                                    binding.progressBarSettingsPasswordChange.setVisibility(view.GONE);
                                                     // Şifre değiştirme başarısız
                                                     Toast.makeText(getContext(), "Şifre değiştirme başarısız. Hata: " + updateTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                    allEnabled(true);
+
                                                 }
                                             });
                                 } else {
+                                    binding.progressBarSettingsPasswordChange.setVisibility(view.GONE);
                                     // Eski şifre doğrulama başarısız
                                     Toast.makeText(getContext(), "Eski şifre doğrulama başarısız. Hata: " + reauthTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    allEnabled(true);
+
                                 }
                             });
                 }
             }
             else{
+                binding.progressBarSettingsPasswordChange.setVisibility(view.GONE);
                 Toast.makeText(getContext(), "Yeni şifreler aynı değil !", Toast.LENGTH_SHORT).show();
+                allEnabled(true);
+
             }
         }
     }
