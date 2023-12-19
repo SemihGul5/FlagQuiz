@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_userNameChangeFragment"
             app:destination="@id/userNameChangeFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_userEmailChangeFragment"
+            app:destination="@id/userEmailChangeFragment" />
     </fragment>
     <fragment
         android:id="@+id/passwordChangeFragment"
@@ -33,6 +36,15 @@
         tools:layout="@layout/fragment_user_name_change" >
         <action
             android:id="@+id/action_userNameChangeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userEmailChangeFragment"
+        android:name="com.example.flagquiz.ui.settings.UserEmailChangeFragment"
+        android:label="fragment_user_email_change"
+        tools:layout="@layout/fragment_user_email_change" >
+        <action
+            android:id="@+id/action_userEmailChangeFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
     </fragment>
 </navigation>
