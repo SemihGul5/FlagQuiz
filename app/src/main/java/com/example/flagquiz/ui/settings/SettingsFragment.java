@@ -85,7 +85,8 @@ public class SettingsFragment extends Fragment {
                     NavController navController= Navigation.findNavController(view);
                     navController.navigate(R.id.action_settingsFragment_to_userEmailChangeFragment);
                 } else if (selected.equals("Hesabı Sil")) {
-                    Toast.makeText(getContext(), "Hesabı sil", Toast.LENGTH_SHORT).show();
+                    NavController navController= Navigation.findNavController(view);
+                    navController.navigate(R.id.action_settingsFragment_to_deleteAccountFragment);
                 }
             }
         });

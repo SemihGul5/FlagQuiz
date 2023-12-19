@@ -79,7 +79,7 @@ public class UserEmailChangeFragment extends Fragment {
 
     private void buttonClicked(View view) {
         binding.progressBarSettingsPasswordChange.setVisibility(View.VISIBLE);
-
+        allEnabled(false);
         String newEmail=binding.newEmailText.getText().toString();
         String newEmailRetry=binding.newEmailRetryText.getText().toString();
 
@@ -94,20 +94,27 @@ public class UserEmailChangeFragment extends Fragment {
                                 binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
                                 auth.signOut();
                                 Intent intent= new Intent(getContext(), MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
+                                allEnabled(true);
+
                             } else {
                                 Toast.makeText(getContext(),  "Email güncelleme hatası: " + task.getException(), Toast.LENGTH_SHORT).show();
                                 binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
+                                allEnabled(true);
+
                             }
                         });
             } else {
                 Toast.makeText(getContext(),  "Kullanıcı oturumu açmamış.", Toast.LENGTH_SHORT).show();
                 binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
+                allEnabled(true);
+
             }
         }else{
             Toast.makeText(getContext(), "Tüm alanları doldurun!", Toast.LENGTH_SHORT).show();
             binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
+            allEnabled(true);
+
         }
     }
 
