@@ -21,6 +21,7 @@ import com.example.flagquiz.ui.about.AboutFragment;
 import com.example.flagquiz.ui.dashboard.DashboardFragment;
 import com.example.flagquiz.ui.home.HomeFragment;
 import com.example.flagquiz.ui.notifications.NotificationsFragment;
+import com.example.flagquiz.ui.settings.SettingsActivity;
 import com.example.flagquiz.ui.settings.SettingsFragment;
 import com.example.flagquiz.ui.share.ShareFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -189,7 +190,10 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             finish();
             binding.progressBarM2.setVisibility(View.GONE);
         } else if (itemId==R.id.nav_settings) {
-            openFragment(new SettingsFragment());
+            //openFragment(new SettingsFragment());
+            Intent intent=new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
+
         } else if (itemId==R.id.nav_home) {
             openFragment(new HomeFragment());
         }
