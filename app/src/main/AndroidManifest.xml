@@ -19,13 +19,25 @@
         android:theme="@style/Theme.FlagQuiz"
         tools:targetApi="31">
         <activity
+            android:name=".ui.settings.DeleteAccountActivity"
+            android:parentActivityName=".MainActivity2"
+            android:theme="@style/Base.Theme.DeleteAccount"
+            android:exported="false" />
+        <activity
+            android:name=".ui.settings.ChangeUserEmailActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity2"
+            android:theme="@style/Base.Theme.UserEmailChange" />
+        <activity
+            android:name=".ui.settings.ChangeUserNameActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity2"
+            android:theme="@style/Base.Theme.PasswordChange" />
+        <activity
             android:name=".ui.settings.PasswordChangeActivity"
             android:exported="false"
-            android:theme="@style/Base.Theme.PasswordChange"
             android:parentActivityName=".MainActivity2"
-
-            />
-
+            android:theme="@style/Base.Theme.PasswordChange" />
         <activity
             android:name=".SignInActivity"
             android:exported="false" />

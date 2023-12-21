@@ -66,7 +66,7 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
     private void progressbarAndTimer() {
         binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
 
-        timer=new CountDownTimer(10000,1000) {
+        timer=new CountDownTimer(60000,1000) {
             @Override
             public void onTick(long l) {
 
@@ -192,7 +192,29 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
     public void onAlertDialogDismissed(boolean isGet) {
         if(isGet){
             timer.cancel();
-            showAlertDialog("Oyun Bitti","Yanlış cevap verdiniz !");
+            if (auth.getCurrentUser() != null) {
+                firestore.collection("Users").whereEqualTo("email", auth.getCurrentUser().getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Toast.makeText(GameActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        if (value != null) {
+                            for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
+                                Map<String, Object> data = documentSnapshot.getData();
+                                String sscore = (String) data.get("score");
+                                int nscore=Integer.parseInt(sscore);
+                                if (score>nscore){
+                                    //yeni score'u kaydet
+                                    updateFirebase();
+                                    scoreListener.scoreUpdate(score);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            showAlertDialog("Oyun Bitti","Yanlış cevap verdiniz ! Puanınız: "+score);
 
         }
     }

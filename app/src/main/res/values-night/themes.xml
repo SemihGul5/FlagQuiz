@@ -49,6 +49,23 @@
 
     </style>
 
+
+    <style name="Base.Theme.UserNameChange" parent="Theme.MaterialComponents.Light.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+    <style name="Base.Theme.UserEmailChange" parent="Theme.MaterialComponents.Light.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+    <style name="Base.Theme.DeleteAccount" parent="Theme.MaterialComponents.Light.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+
     <style name="Theme.FlagQuiz" parent="Base.Theme.FlagQuiz" />
 
     <style name="Theme.FlagQuiz.NoActionBar">

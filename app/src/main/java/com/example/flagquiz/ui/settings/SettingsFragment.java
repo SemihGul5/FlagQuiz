@@ -82,11 +82,16 @@ public class SettingsFragment extends Fragment {
                     startActivity(intent);
 
                 } else if (selected.equals("Kullanıcı Adı Değiştir")) {
+                    Intent intent= new Intent(getContext(), ChangeUserNameActivity.class);
+                    startActivity(intent);
 
                 } else if (selected.equals("E - mail Değiştir")) {
+                    Intent intent= new Intent(getContext(), ChangeUserEmailActivity.class);
+                    startActivity(intent);
 
                 } else if (selected.equals("Hesabı Sil")) {
-
+                    Intent intent= new Intent(getContext(), DeleteAccountActivity.class);
+                    startActivity(intent);
                 }
             }
         });
