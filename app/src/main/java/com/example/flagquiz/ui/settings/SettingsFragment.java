@@ -1,11 +1,13 @@
 package com.example.flagquiz.ui.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
@@ -74,16 +76,17 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String selected = arrayAdapter.getItem(i);
-                NavController navController = Navigation.findNavController(view);
 
                 if (selected.equals("Şifreyi Değiştir")) {
-                    navController.navigate(R.id.action_settingsFragment_to_passwordChangeFragment);
+                    Intent intent= new Intent(getContext(), PasswordChangeActivity.class);
+                    startActivity(intent);
+
                 } else if (selected.equals("Kullanıcı Adı Değiştir")) {
-                    navController.navigate(R.id.action_settingsFragment_to_userNameChangeFragment);
+
                 } else if (selected.equals("E - mail Değiştir")) {
-                    navController.navigate(R.id.action_settingsFragment_to_userEmailChangeFragment);
+
                 } else if (selected.equals("Hesabı Sil")) {
-                    navController.navigate(R.id.action_settingsFragment_to_deleteAccountFragment);
+
                 }
             }
         });

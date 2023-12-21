@@ -1,7 +1,65 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.FlagQuiz" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Base.Theme.FlagQuiz" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="colorPrimaryVariant">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
     </style>
+
+    <style name="Base.Theme.MainActivity" parent="Theme.MaterialComponents.Light.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+
+    <style name="Base.Theme.Login" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="colorPrimaryVariant">@color/appColor</item>
+
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+
+    <style name="Base.Theme.HighScore" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+    <style name="Base.Theme.GameActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+    <style name="Base.Theme.SettingsActivity" parent="Theme.MaterialComponents.Light.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+
+    <style name="Base.Theme.Game" parent="Theme.MaterialComponents.Light.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+    <style name="Base.Theme.PasswordChange" parent="Theme.MaterialComponents.Light.Bridge">
+        <item name="colorPrimary">@color/appColor</item>
+        <item name="titleTextColor">@color/white</item>
+
+    </style>
+
+    <style name="Theme.FlagQuiz" parent="Base.Theme.FlagQuiz" />
+
+    <style name="Theme.FlagQuiz.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="ThemeOverlay.AppCompat.navTheme">
+        <item name="colorPrimary">@color/white</item>
+    </style>
+
+
+
 </resources>

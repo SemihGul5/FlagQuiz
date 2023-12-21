@@ -1,36 +1,21 @@
 package com.example.flagquiz;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.flagquiz.databinding.ActivityGameBinding;
 import com.example.flagquiz.ui.about.AboutFragment;
 import com.example.flagquiz.ui.dashboard.DashboardFragment;
 import com.example.flagquiz.ui.home.HomeFragment;
 import com.example.flagquiz.ui.notifications.NotificationsFragment;
-import com.example.flagquiz.ui.settings.SettingsActivity;
 import com.example.flagquiz.ui.settings.SettingsFragment;
-import com.example.flagquiz.ui.share.ShareFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -39,10 +24,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.example.flagquiz.databinding.ActivityMain2Binding;
 import com.google.android.material.navigation.NavigationBarView;
@@ -53,7 +34,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -190,9 +170,8 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
             finish();
             binding.progressBarM2.setVisibility(View.GONE);
         } else if (itemId==R.id.nav_settings) {
-            //openFragment(new SettingsFragment());
-            Intent intent=new Intent(getApplicationContext(), SettingsActivity.class);
-            startActivity(intent);
+            openFragment(new SettingsFragment());
+
 
         } else if (itemId==R.id.nav_home) {
             openFragment(new HomeFragment());
