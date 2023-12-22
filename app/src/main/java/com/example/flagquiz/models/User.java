@@ -1,4 +1,4 @@
-package com.example.flagquiz;
+package com.example.flagquiz.models;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -9,6 +9,7 @@ public class User {
     private String score;
     private String kalanHak;
     private String docId;
+    private String rank;
 
     public User(String name_family, String userName, String eMail, String score, String kalanHak, String docId) {
         this.name_family = name_family;
@@ -24,6 +25,14 @@ public class User {
         this.eMail = eMail;
         this.score = score;
         this.kalanHak = kalanHak;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
     public String getDocId() {

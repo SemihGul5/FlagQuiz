@@ -14,9 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.flagquiz.GameActivity;
-import com.example.flagquiz.MainActivity2;
 import com.example.flagquiz.R;
-import com.example.flagquiz.User;
 import com.example.flagquiz.databinding.FragmentHomeBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

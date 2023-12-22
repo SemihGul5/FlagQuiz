@@ -1,4 +1,4 @@
-package com.example.flagquiz;
+package com.example.flagquiz.interfaces;
 
 public interface OnAnswerSelectedListener {
     void onAnswerSelected(boolean isCorrect);

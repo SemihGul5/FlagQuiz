@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.flagquiz.models.User;
 import com.example.flagquiz.ui.about.AboutFragment;
 import com.example.flagquiz.ui.dashboard.DashboardFragment;
 import com.example.flagquiz.ui.home.HomeFragment;

@@ -2,27 +2,22 @@ package com.example.flagquiz;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.flagquiz.databinding.FragmentQuestionBinding;
-import com.example.flagquiz.databinding.FragmentSigninBinding;
+import com.example.flagquiz.interfaces.OnAlertDialogDismissListener;
+import com.example.flagquiz.interfaces.OnAnswerSelectedListener;
+import com.example.flagquiz.interfaces.OnDataPassedListener;
+import com.example.flagquiz.models.Country;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

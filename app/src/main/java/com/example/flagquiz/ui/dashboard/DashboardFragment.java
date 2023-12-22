@@ -2,10 +2,10 @@ package com.example.flagquiz.ui.dashboard;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,10 +15,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.flagquiz.GameActivity;
-import com.example.flagquiz.OnNewScoreListener;
-import com.example.flagquiz.ScoreAdapter;
-import com.example.flagquiz.User;
+import com.example.flagquiz.interfaces.OnNewScoreListener;
+import com.example.flagquiz.adapters.ScoreAdapter;
+import com.example.flagquiz.models.User;
 import com.example.flagquiz.databinding.FragmentDashboardBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,6 +52,7 @@ public class DashboardFragment extends Fragment implements OnNewScoreListener {
         user=FirebaseAuth.getInstance().getCurrentUser();
         firestore=FirebaseFirestore.getInstance();
         userArrayList=new ArrayList<>();
+
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,9 +69,11 @@ public class DashboardFragment extends Fragment implements OnNewScoreListener {
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL,false));
         adapter=new ScoreAdapter(userArrayList,getContext());
-        getEmailAndUserName();
+        userArrayList.clear();
+
         getAllScores();
         binding.recyclerView.setAdapter(adapter);
+
     }
 
     @Override
@@ -79,9 +81,9 @@ public class DashboardFragment extends Fragment implements OnNewScoreListener {
         super.onDestroyView();
         binding = null;
     }
-    private void getAllScores(){
+    private void getAllScores() {
         userArrayList.clear();
-        if (user!=null){
+        if (user != null) {
             firestore.collection("Users").orderBy("score", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
@@ -90,52 +92,27 @@ public class DashboardFragment extends Fragment implements OnNewScoreListener {
                         Toast.makeText(getContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                     if (value != null) {
+                        int rank = 1; // Initialize rank
                         for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
                             Map<String, Object> data = documentSnapshot.getData();
 
                             String score = (String) data.get("score");
-                            String userName=(String) data.get("userName");
-                            String email=(String) data.get("email");
-                            String kalanhak=(String) data.get("kalanHak");
-                            String nf=(String) data.get("name_family");
+                            String userName = (String) data.get("userName");
+                            String email = (String) data.get("email");
+                            String kalanhak = (String) data.get("kalanHak");
+                            String nf = (String) data.get("name_family");
 
-                            User user1=new User(nf,userName,email,score,kalanhak);
+                            User user1 = new User(nf, userName, email, score, kalanhak);
+                            user1.setRank(String.valueOf(rank++));
                             userArrayList.add(user1);
+
                         }
                         adapter.notifyDataSetChanged();
-
                     }
                 }
             });
         }
     }
-
-    private void getEmailAndUserName() {
-        if (user != null) {
-            firestore.collection("Users").whereEqualTo("email", user.getEmail()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if (error != null) {
-                        Toast.makeText(getContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (value != null && !value.isEmpty()) {
-                        // İlk belgeyi kullanıyoruz, çünkü e-posta adresi benzersiz olmalıdır
-                        DocumentSnapshot documentSnapshot = value.getDocuments().get(0);
-                        Map<String, Object> data = documentSnapshot.getData();
-                        if (data != null) {
-                            score = (String) data.get("score");
-                            userName = (String) data.get("userName");
-                            binding.dashboardMyUserScoreText.setText(score);
-                            binding.dashboardMyUserNameText.setText(userName);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-
 
     @Override
     public void scoreUpdate(int newScore) {

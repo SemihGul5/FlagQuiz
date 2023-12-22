@@ -27,153 +27,119 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.concurrent.Executor;
+
 
 public class DeleteAccountFragment extends Fragment {
 
-   private FragmentDeleteAccountBinding binding;
-   private FirebaseAuth auth;
-   private FirebaseUser user;
-   private FirebaseFirestore firestore;
-   String userEmail;
+    private FragmentDeleteAccountBinding binding;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
+    private FirebaseFirestore firestore;
+    private String userEmail;
 
     public DeleteAccountFragment() {
-        // Required empty public constructor
+        // Gerekli boş yapıcı method
     }
 
     public static DeleteAccountFragment newInstance(String param1, String param2) {
-        DeleteAccountFragment fragment = new DeleteAccountFragment();
-
-        return fragment;
+        return new DeleteAccountFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        auth=FirebaseAuth.getInstance();
-        user=auth.getCurrentUser();
-        firestore=FirebaseFirestore.getInstance();
-        userEmail=user.getEmail();
-        allEnabled(true);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        firestore = FirebaseFirestore.getInstance();
+        userEmail = (user != null) ? user.getEmail() : "";
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = FragmentDeleteAccountBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        return  root;
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.deleteAccountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buttonClicked(view);
-            }
-        });
-
+        binding.deleteAccountButton.setOnClickListener(this::buttonClicked);
     }
 
     private void buttonClicked(View view) {
         allEnabled(false);
         binding.progressBarDeleteAccount.setVisibility(View.VISIBLE);
 
-        String email=binding.deleteAccountEmailText.getText().toString();
-        String password=binding.deleteAccountPasswordText.getText().toString();
+        String email = binding.deleteAccountEmailText.getText().toString();
+        String password = binding.deleteAccountPasswordText.getText().toString();
 
-        if(email.isEmpty()||password.isEmpty()){
+        if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(getContext(), "E-mail ve şifre alanını giriniz.", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            //hesap silme için uyarı dialogu çıkart
-            AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
-            builder.setTitle("Hesap Silme");
-            builder.setMessage("Hesabınızı silmek istediğinizden emin misiniz?");
-            builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    //evet'e tıklandı, hesabı sil
-                    // Kullanıcının girdiği email ve şifre ile Firebase hesabını sil
-                    if(user!=null){
-                        user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    //hesap başarıyla silindi. yapılacak işlemler;
-                                    Toast.makeText(getContext(), "Hesap başarıyla silindi.", Toast.LENGTH_SHORT).show();
-                                    allEnabled(true);
-                                    auth.signOut();
-
-                                    // Hesap silindiği için bir aktiviteye yönlendirebilirsiniz, örneğin giriş ekranına.
-                                    Intent intent = new Intent(getContext(), MainActivity.class);
-                                    startActivity(intent);
-
-                                    binding.progressBarDeleteAccount.setVisibility(View.GONE);
-
-                                    //koleksiyondan da silme işlemi için
-                                    deleteUserInFirestore();
-                                }
-                                else{
-                                    //hesap silme işlemi başarısız oldu
-                                    Toast.makeText(getContext(), "Hesap silme işlemi başarısız", Toast.LENGTH_SHORT).show();
-                                    allEnabled(true);
-                                    binding.progressBarDeleteAccount.setVisibility(View.GONE);
-
-                                }
-                            }
-                        });
-                    }else{
-                        Toast.makeText(getContext(), "Kullanıcı oturumu açılmamış", Toast.LENGTH_SHORT).show();
-                        allEnabled(true);
-                        binding.progressBarDeleteAccount.setVisibility(View.GONE);
-
-                    }
-
-
-                }
-            });
-            builder.setNegativeButton("Hayır",null);
-            builder.show();
             allEnabled(true);
             binding.progressBarDeleteAccount.setVisibility(View.GONE);
+        } else {
+            showDeleteConfirmationDialog();
+        }
+    }
 
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Hesabı Sil");
+        builder.setMessage("Hesabınızı silmek istediğinizden emin misiniz?");
+        builder.setPositiveButton("Evet", (dialog, which) -> deleteUserAccount());
+        builder.setNegativeButton("Hayır", (dialog, which) -> {
+            dialog.dismiss();
+            allEnabled(true);
+            binding.progressBarDeleteAccount.setVisibility(View.GONE);
+        });
+        builder.show();
+    }
 
+    private void deleteUserAccount() {
+        if (user != null) {
+            user.delete().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getContext(), "Hesap başarıyla silindi.", Toast.LENGTH_SHORT).show();
+                    auth.signOut();
+                    navigateToMainActivity();
+                    deleteUserInFirestore();
+                } else {
+                    Toast.makeText(getContext(), "Hesap silme işlemi başarısız", Toast.LENGTH_SHORT).show();
+                }
+                allEnabled(true);
+                binding.progressBarDeleteAccount.setVisibility(View.GONE);
+            });
+        } else {
+            Toast.makeText(getContext(), "Kullanıcı oturumu açılmamış", Toast.LENGTH_SHORT).show();
+            allEnabled(true);
+            binding.progressBarDeleteAccount.setVisibility(View.GONE);
         }
     }
 
     private void deleteUserInFirestore() {
-        firestore.collection("Users").whereEqualTo("email",userEmail).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        // Hedef belgeyi sil
-                        firestore.collection("Users").document(document.getId())
-                                .delete()
-                                .addOnSuccessListener(aVoid -> {
-                                    // Belge başarıyla silindiğinde yapılacak işlemler
-                                    //Toast.makeText(getContext(), "Kullanıcı başarıyla silindi.", Toast.LENGTH_SHORT).show();
-                                    Log.e("Firestore", "Kullanıcı koleksiyonunu başarıyla silindi");
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Belge silme işlemi başarısız olduğunda yapılacak işlemler
-                                    //Toast.makeText(getContext(), "Kullanıcı silme işlemi başarısız oldu.", Toast.LENGTH_SHORT).show();
-                                    Log.e("Firestore", "Kullanıcı koleksiyonunu silme hatası, for içinde");
-                                });
-                    }
+        firestore.collection("Users").whereEqualTo("email", userEmail).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    firestore.collection("Users").document(document.getId())
+                            .delete()
+                            .addOnSuccessListener(aVoid -> Log.e("Firestore", "Kullanıcı koleksiyonu başarıyla silindi"))
+                            .addOnFailureListener(e -> Log.e("Firestore", "Kullanıcı koleksiyonu silme hatası", e));
                 }
-                else {
-                    Log.e("Firestore", "Kullanıcı koleksiyonunu silme hatası");
-                }
+            } else {
+                Log.e("Firestore", "Kullanıcı koleksiyonu silme hatası");
             }
         });
     }
-    private void allEnabled(Boolean status){
+
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void allEnabled(Boolean status) {
         binding.deleteAccountButton.setEnabled(status);
         binding.deleteAccountPasswordText.setEnabled(status);
         binding.deleteAccountEmailText.setEnabled(status);
     }
-
 }

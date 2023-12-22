@@ -1,4 +1,4 @@
-package com.example.flagquiz;
+package com.example.flagquiz.models;
 
 public class Country {
     private String countryName;
