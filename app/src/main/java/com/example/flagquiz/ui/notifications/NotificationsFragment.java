@@ -72,11 +72,51 @@ public class NotificationsFragment extends Fragment {
         String message = binding.notifiactionMessageContextText.getText().toString();
 
         if (!title.equals("") && !message.equals("")) {
-            sendEmail("mailto:semih.gul099@gmail.com?subject=" + title + "&body=" + message);
+            binding.progressBarSendMail.setVisibility(View.VISIBLE);
+            sendEmail("mailto:abrebostudio@gmail.com?subject=" + title + "&body=" + message);
+
+            // E-posta gönderildikten sonra Firestore işlemi
+            updateRemainingSendQuota();
         } else {
             Toast.makeText(getContext(), "Tüm alanları doldurun", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void updateRemainingSendQuota() {
+        if (user != null) {
+            // Kullanıcının "kalan gönderim hakkı" alanını azalt
+            firestore.collection("Users")
+                    .whereEqualTo("email", user.getEmail())
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                // Firestore'dan mevcut değeri al
+                                String currentQuota = document.getString("kalanHak").toString();
+                                int cCurrentQuota=Integer.parseInt(currentQuota);
+
+                                // Azaltılmış değeri Firestore'a geri yükle
+                                firestore.collection("Users")
+                                        .document(document.getId())
+                                        .update("kalanHak", String.valueOf(cCurrentQuota - 1))
+                                        .addOnSuccessListener(aVoid -> {
+                                            // Başarılı bir şekilde güncellendiğinde yapılacak işlemler
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            // Güncelleme işlemi başarısız olduğunda yapılacak işlemler
+                                            Toast.makeText(getContext(), "Güncelleme işlemi başarısız oldu", Toast.LENGTH_SHORT).show();
+                                        });
+                                binding.progressBarSendMail.setVisibility(View.GONE);
+
+                            }
+                        } else {
+                            // Firestore veri getirme işlemi başarısız olduğunda yapılacak işlemler
+                            Toast.makeText(getContext(), "Veri getirme işlemi başarısız oldu", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
 
     private void sendEmail(String mailto) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);

@@ -2,7 +2,7 @@
     <string name="app_name">FlagQuiz</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_main2">FlagQuiz</string>
     <string name="title_home">Ana Sayfa</string>
     <string name="title_dashboard">Puan Tablosu</string>
     <string name="title_notifications">Bize Ulaşın</string>

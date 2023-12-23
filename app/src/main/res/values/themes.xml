@@ -66,6 +66,7 @@
 
     </style>
 
+
     <style name="Theme.FlagQuiz" parent="Base.Theme.FlagQuiz" />
 
     <style name="Theme.FlagQuiz.NoActionBar">
