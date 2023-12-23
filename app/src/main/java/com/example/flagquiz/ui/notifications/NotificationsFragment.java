@@ -1,5 +1,8 @@
 package com.example.flagquiz.ui.notifications;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +59,36 @@ public class NotificationsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getEmailAndUserName();
+        binding.sendMailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttonClicked();
+            }
+        });
     }
+
+    private void buttonClicked() {
+        String title = binding.notifiactionMessageTitleText.getText().toString();
+        String message = binding.notifiactionMessageContextText.getText().toString();
+
+        if (!title.equals("") && !message.equals("")) {
+            sendEmail("mailto:semih.gul099@gmail.com?subject=" + title + "&body=" + message);
+        } else {
+            Toast.makeText(getContext(), "Tüm alanları doldurun", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendEmail(String mailto) {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse(mailto));
+
+        try {
+            startActivity(emailIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), "E-posta uygulaması bulunamadı.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     public void onDestroyView() {
