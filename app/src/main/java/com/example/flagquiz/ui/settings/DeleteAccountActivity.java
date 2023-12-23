@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +41,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
         //geri butonu
         ActionBar actionBar=getSupportActionBar();
         assert actionBar != null;
-        actionBar.setTitle("Şifre Değiştir");
+        actionBar.setTitle("Hesap Sil");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24);
 
@@ -63,69 +64,61 @@ public class DeleteAccountActivity extends AppCompatActivity {
 
     private void buttonClicked(View view) {
         allEnabled(false);
-        binding.progressBarDeleteAccount.setVisibility(View.VISIBLE);
 
-        String email=binding.deleteAccountEmailText.getText().toString();
-        String password=binding.deleteAccountPasswordText.getText().toString();
+        String email = binding.deleteAccountEmailText.getText().toString();
+        String password = binding.deleteAccountPasswordText.getText().toString();
 
-        if(email.isEmpty()||password.isEmpty()){
+        if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "E-mail ve şifre alanını giriniz.", Toast.LENGTH_SHORT).show();
+        } else {
+            // Firebase Authentication ile kullanıcının e-posta ve şifresini doğrula
+            auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            // E-posta ve şifre doğru, hesabı silme işlemini başlat
+                            showDeleteAccountDialog();
+                        } else {
+                            // E-posta ve şifre hatalı
+                            Toast.makeText(this, "E-mail veya şifre hatalı", Toast.LENGTH_SHORT).show();
+                            allEnabled(true);
+                        }
+                    });
         }
-        else{
-            //hesap silme için uyarı dialogu çıkart
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            builder.setTitle("Hesap Silme");
-            builder.setMessage("Hesabınızı silmek istediğinizden emin misiniz?");
-            builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    //evet'e tıklandı, hesabı sil
-                    // Kullanıcının girdiği email ve şifre ile Firebase hesabını sil
-                    if(user!=null){
-                        user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    //hesap başarıyla silindi. yapılacak işlemler;
-                                    Toast.makeText(getApplicationContext(), "Hesap başarıyla silindi.", Toast.LENGTH_SHORT).show();
-                                    allEnabled(true);
-                                    auth.signOut();
+    }
 
-                                    // Hesap silindiği için bir aktiviteye yönlendirebilirsiniz, örneğin giriş ekranına.
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
-
-                                    binding.progressBarDeleteAccount.setVisibility(View.GONE);
-
-                                    //koleksiyondan da silme işlemi için
-                                    deleteUserInFirestore();
-                                }
-                                else{
-                                    //hesap silme işlemi başarısız oldu
-                                    Toast.makeText(getApplicationContext(), "Hesap silme işlemi başarısız", Toast.LENGTH_SHORT).show();
-                                    allEnabled(true);
-                                    binding.progressBarDeleteAccount.setVisibility(View.GONE);
-
-                                }
-                            }
-                        });
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Kullanıcı oturumu açılmamış", Toast.LENGTH_SHORT).show();
-                        allEnabled(true);
-                        binding.progressBarDeleteAccount.setVisibility(View.GONE);
-
-                    }
-
-
+    private void showDeleteAccountDialog() {
+        // Hesap silme için uyarı dialogu çıkart
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Hesap Silme");
+        builder.setMessage("Hesabınızı silmek istediğinizden emin misiniz?");
+        builder.setPositiveButton("Evet", (dialogInterface, i) -> {
+            binding.progressBarDeleteAccount.setVisibility(View.VISIBLE);
+            // Evet'e tıklandı, hesabı sil
+            deleteUserInFirestore();
+            // Firebase Authentication ile hesabı sil
+            user.delete().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // Hesap başarıyla silindi, ana ekrana dön
+                    Toast.makeText(this, "Hesap başarıyla silindi", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
+                    finishActivity(DeleteAccountActivity.RESULT_OK);
+                    finishAffinity();
+                } else {
+                    // Hesap silme hatası
+                    Toast.makeText(this, "Hesap silme işlemi başarısız oldu.", Toast.LENGTH_SHORT).show();
+                    allEnabled(true);
+                    binding.progressBarDeleteAccount.setVisibility(View.GONE);
                 }
             });
-            builder.setNegativeButton("Hayır",null);
-            builder.show();
+        });
+        builder.setNegativeButton("Hayır", (dialogInterface, i) -> {
             allEnabled(true);
             binding.progressBarDeleteAccount.setVisibility(View.GONE);
-
-
-        }
+        });
+        builder.show();
     }
 
     private void deleteUserInFirestore() {

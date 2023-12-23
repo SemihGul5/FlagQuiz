@@ -44,7 +44,6 @@ public class SettingsFragment extends Fragment {
         arrayList=new ArrayList<>();
         arrayList.add("Şifreyi Değiştir");
         arrayList.add("Kullanıcı Adı Değiştir");
-        arrayList.add("E - mail Değiştir");
         arrayList.add("Hesabı Sil");
 
 
@@ -85,11 +84,12 @@ public class SettingsFragment extends Fragment {
                     Intent intent= new Intent(getContext(), ChangeUserNameActivity.class);
                     startActivity(intent);
 
-                } else if (selected.equals("E - mail Değiştir")) {
+                } /*else if (selected.equals("E - mail Değiştir")) {
                     Intent intent= new Intent(getContext(), ChangeUserEmailActivity.class);
                     startActivity(intent);
 
-                } else if (selected.equals("Hesabı Sil")) {
+                } */
+                else if (selected.equals("Hesabı Sil")) {
                     Intent intent= new Intent(getContext(), DeleteAccountActivity.class);
                     startActivity(intent);
                 }

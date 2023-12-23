@@ -16,12 +16,16 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.flagquiz.GameActivity;
 import com.example.flagquiz.R;
 import com.example.flagquiz.databinding.FragmentHomeBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Map;
@@ -65,7 +69,7 @@ public class HomeFragment extends Fragment {
 
         getEmailAndUserName();
 
-
+        getRankForCurrentUser();
     }
 
     private void goToGame(View view) {
@@ -101,6 +105,44 @@ public class HomeFragment extends Fragment {
                     }
                 }
             });
+        }
+    }
+    private void getRankForCurrentUser() {
+        if (user != null) {
+            firestore.collection("Users")
+                    .orderBy("score", Query.Direction.DESCENDING)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            int userRank = -1; // -1: Kullanıcı bulunamadı
+                            int rank = 1; // Sıralama numarası
+
+                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                Map<String, Object> data = document.getData();
+                                String userEmail = (String) data.get("email");
+
+                                if (user.getEmail().equals(userEmail)) {
+                                    userRank = rank;
+                                    break; // Kullanıcı bulundu, döngüyü sonlandır
+                                }
+
+                                rank++; // Kullanıcı bulunamadı, sıralama numarasını artır
+                            }
+
+                            if (userRank != -1) {
+                                binding.textViewMyRankText.setText("Sıralamam: " + userRank+".");
+                            } else {
+                                binding.textViewMyRankText.setText("Sıralama bulunamadı");
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 }

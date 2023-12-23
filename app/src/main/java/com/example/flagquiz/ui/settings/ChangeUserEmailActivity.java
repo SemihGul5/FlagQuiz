@@ -80,7 +80,7 @@ public class ChangeUserEmailActivity extends AppCompatActivity {
                                 allEnabled(true);
 
                             } else {
-                                Toast.makeText(this,  "Email güncelleme hatası: " + task.getException(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this,  "E: " + task.getException(), Toast.LENGTH_SHORT).show();
                                 binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
                                 allEnabled(true);
 

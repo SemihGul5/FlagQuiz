@@ -3,7 +3,9 @@ package com.example.flagquiz.ui.settings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -48,21 +50,17 @@ public class PasswordChangeActivity extends AppCompatActivity implements Passwor
             @Override
             public void onClick(View view) {
                 String oldPassword = binding.oldPasswordText.getText().toString();
-                String newPassword = binding.newPasswordText.getText().toString();
-                String newPasswordRep = binding.newPasswordRetryText.getText().toString();
-                passwordUpdateButtonClicked(oldPassword, newPassword, newPasswordRep);
+                passwordUpdateButtonClicked(oldPassword);
             }
         });
     }
 
     private void allEnabled(boolean enabledStatus) {
         binding.oldPasswordText.setEnabled(enabledStatus);
-        binding.newPasswordText.setEnabled(enabledStatus);
-        binding.newPasswordRetryText.setEnabled(enabledStatus);
         binding.passwordUpdateButton.setEnabled(enabledStatus);
     }
 
-    private void passwordUpdateButtonClicked(String oldPassword, String newPassword, String newPasswordRepeat) {
+    private void passwordUpdateButtonClicked(String oldPassword) {
         allEnabled(false);
         binding.progressBarSettingsPasswordChange.setVisibility(View.VISIBLE);
 
@@ -89,17 +87,28 @@ public class PasswordChangeActivity extends AppCompatActivity implements Passwor
 
     @Override
     public void onResult(boolean isCorrect) {
-        if (isCorrect && isPasswordValid(binding.newPasswordText.getText().toString(), binding.newPasswordRetryText.getText().toString())) {
-            // Firebase Authentication üzerinden şifreyi güncelle
-            user.updatePassword(binding.newPasswordText.getText().toString())
+        if (isCorrect) {
+            auth.sendPasswordResetEmail(user.getEmail()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        // Şifre sıfırlama e-posta gönderme başarılı
+                        Toast.makeText(getApplicationContext(), "E-posta adresiniz başarıyla güncellendi ve şifre sıfırlama bağlantısı gönderildi", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Şifre sıfırlama e-posta gönderme başarısız
+                        Snackbar.make(findViewById(android.R.id.content), "Şifre sıfırlama e-posta gönderme hatası: " + task.getException().getMessage(), Snackbar.LENGTH_SHORT).show();
+                    }
+                    binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
+                    allEnabled(true);
+                }
+            });
+            /*user.updatePassword(binding.newPasswordText.getText().toString())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(Task<Void> task) {
                             if (task.isSuccessful()) {
                                 // Şifre güncelleme başarılı
-                                Snackbar.make(findViewById(android.R.id.content), "Şifreniz başarıyla güncellendi.", Snackbar.LENGTH_SHORT).show();
-                                Intent intent=new Intent(getApplicationContext(), MainActivity2.class);
-                                startActivity(intent);
+                                Toast.makeText(getApplicationContext(), "Şifreniz başarıyla güncellendi", Toast.LENGTH_SHORT).show();
                             } else {
                                 // Şifre güncelleme başarısız
                                 Snackbar.make(findViewById(android.R.id.content), "Şifre güncelleme hatası: " + task.getException().getMessage(), Snackbar.LENGTH_SHORT).show();
@@ -108,13 +117,12 @@ public class PasswordChangeActivity extends AppCompatActivity implements Passwor
                                 binding.newPasswordText.setText("");
                             }
 
-                            binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
-                            allEnabled(true);
+
                         }
-                    });
+                    });*/
         } else {
             // Eski şifre yanlış veya yeni şifre ile tekrarı uyuşmuyor
-            Snackbar.make(findViewById(android.R.id.content), "Eski şifre yanlış veya yeni şifre ile tekrarı uyuşmuyor.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(android.R.id.content), "Eski şifre yanlış.", Snackbar.LENGTH_SHORT).show();
             binding.progressBarSettingsPasswordChange.setVisibility(View.GONE);
             allEnabled(true);
         }
