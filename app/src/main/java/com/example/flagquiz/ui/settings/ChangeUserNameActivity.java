@@ -1,5 +1,8 @@
 package com.example.flagquiz.ui.settings;
 
+import static java.security.AccessController.getContext;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.flagquiz.MainActivity2;
 import com.example.flagquiz.R;
+import com.example.flagquiz.adapters.ScoreAdapter;
 import com.example.flagquiz.databinding.ActivityChangeUserNameBinding;
+import com.example.flagquiz.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -23,11 +28,15 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+
 public class ChangeUserNameActivity extends AppCompatActivity {
     private ActivityChangeUserNameBinding binding;
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
     private FirebaseUser user;
+    ScoreAdapter adapter;
+    ArrayList<User> userArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,9 @@ public class ChangeUserNameActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         allEnabled(true);
+        userArrayList=new ArrayList<>();
+        adapter=new ScoreAdapter(userArrayList,getApplicationContext());
+        userArrayList.clear();
 
         // Geri butonu
         ActionBar actionBar = getSupportActionBar();
@@ -107,6 +119,7 @@ public class ChangeUserNameActivity extends AppCompatActivity {
         Query query = reference.whereEqualTo("email", user.getEmail());
 
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -126,6 +139,7 @@ public class ChangeUserNameActivity extends AppCompatActivity {
                                     // Ayarlar fragmentına geri dön
                                     //Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
                                     //startActivity(intent);
+                                    adapter.notifyDataSetChanged();
                                     binding.newUserNameText.setText("");
                                 })
                                 .addOnFailureListener(e -> {
