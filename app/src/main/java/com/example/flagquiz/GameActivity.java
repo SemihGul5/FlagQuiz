@@ -8,14 +8,17 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.flagquiz.databinding.ActivityGameBinding;
+import com.example.flagquiz.interfaces.Atlama;
 import com.example.flagquiz.interfaces.OnAlertDialogDismissListener;
 import com.example.flagquiz.interfaces.OnAnswerSelectedListener;
 import com.example.flagquiz.interfaces.OnDataPassedListener;
@@ -31,6 +34,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class GameActivity extends AppCompatActivity implements OnDataPassedListener, OnAnswerSelectedListener, OnAlertDialogDismissListener {
@@ -41,6 +45,7 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
     FirebaseAuth auth;
     private CountDownTimer timer;
     private OnNewScoreListener scoreListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,8 +67,21 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
                 .commit();
 
         progressbarAndTimer();
+        binding.oyunuBitirButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                oyunuBitirButtonTiklandi();
+            }
+        });
+
 
     }
+
+
+    private void oyunuBitirButtonTiklandi() {
+        showAlertDialog("Oyunu Bitir","Oyunu kapatmak istediğinizden emin misiniz? Puanınız kaydedilmeyecektir!");
+    }
+
     private void progressbarAndTimer() {
         binding.progressBarGame.getProgressDrawable().setColorFilter(Color.parseColor("#70F155"), PorterDuff.Mode.SRC_IN);
 
@@ -186,6 +204,7 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
         if (isCorrect) {
             score++;
             binding.scoreText.setText(String.valueOf(score));  // Gösterilen puanı güncelle
+
         }
     }
 
@@ -220,4 +239,8 @@ public class GameActivity extends AppCompatActivity implements OnDataPassedListe
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        showAlertDialog("Oyunu Bitir","Oyunu kapatmak istediğinizden emin misiniz? Puanınız kaydedilmeyecektir!");
+    }
 }

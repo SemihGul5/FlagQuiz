@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.example.flagquiz.MainActivity;
 import com.example.flagquiz.R;
 import com.example.flagquiz.databinding.FragmentDeleteAccountBinding;
-import com.example.flagquiz.databinding.FragmentPasswordChangeBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

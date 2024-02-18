@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.flagquiz.databinding.FragmentQuestionBinding;
+import com.example.flagquiz.interfaces.Atlama;
 import com.example.flagquiz.interfaces.OnAlertDialogDismissListener;
 import com.example.flagquiz.interfaces.OnAnswerSelectedListener;
 import com.example.flagquiz.interfaces.OnDataPassedListener;
@@ -50,6 +51,7 @@ public class QuestionFragment extends Fragment {
     private List<Integer> usedCountryIndexes = new ArrayList<>(); // Kullanılan ülkelerin indekslerini saklamak için
 
 
+    ArrayList<Integer> atlamaSayisalDizisi= new ArrayList<Integer>();
 
 
     public QuestionFragment() {
@@ -158,12 +160,7 @@ public class QuestionFragment extends Fragment {
         image3Clicked(view,correctAnswer);
         image4Clicked(view,correctAnswer);
 
-        binding.buttonGameSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                generateNewQuestion(view);
-            }
-        });
+
     }
     private void generateNewQuestion(View view) {
 
@@ -637,5 +634,4 @@ public class QuestionFragment extends Fragment {
         countries.add(new Country("ZİMBABVE",R.drawable.zimbabve));
 
     }
-
 }

@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.flagquiz.MainActivity;
 import com.example.flagquiz.R;
 import com.example.flagquiz.SignInActivity;
-import com.example.flagquiz.databinding.FragmentPasswordChangeBinding;
+//import com.example.flagquiz.databinding.FragmentPasswordChangeBinding;
 import com.example.flagquiz.databinding.FragmentUserEmailChangeBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
