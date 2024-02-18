@@ -21,7 +21,7 @@ Bu uygulama, bayraklarla ilgili bir quiz oyunudur. Kullanıcılar, farklı ülke
 ## Kullanım
 - Uygulama başlatıldığında, kullanıcılar rastgele ülkelerin bayraklarının resimlerini görecektir.
 - Kullanıcılar doğru bayrağı seçmelidir. Doğru seçimde puan kazanılır.
-- Kullanıcılar yanlış bayrağı seçerse puan kaybeder ve oyun devam eder.
+- Kullanıcılar yanlış bayrağı seçerse oyun sonlanır.
 - Oyun sona erdiğinde, kullanıcının puanı ekranda gösterilir ve tekrar oynamak için seçenek sunulur.
 
 ## Kullanım Videosu
